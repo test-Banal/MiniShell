@@ -1,4 +1,6 @@
-bool    execute(t_data *pipex)
+#include "minishell.h"
+
+bool    execute(t_data *data)
 {
     
 

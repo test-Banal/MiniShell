@@ -44,19 +44,19 @@ void   handle_exitcode(t_data *data, int i, int status)
     if (WIFEXITED(status))
     {
         if (WEXITSTATUS(status) == 0)
-            data->exitcode = 0;
+            data->exit_code = 0;
         else
-            data->exitcode = 1;
+            data->exit_code = 1;
     }
     else if (WIFSIGNALED(status))
     {
         if (WTERMSIG(status) == 2)
-            data->exitcode = 130;
+            data->exit_code = 130;
         else if (WTERMSIG(status) == 3)
-            data->exitcode = 131;
+            data->exit_code = 131;
         else
-            data->exitcode = 128 + WTERMSIG(status);
+            data->exit_code = 128 + WTERMSIG(status);
     }
     else
-        data->exitcode = 1;
+        data->exit_code = 1;
 }

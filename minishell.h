@@ -6,7 +6,7 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:43:33 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/30 12:15:00 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/08/30 12:18:32 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,6 @@ typedef struct s_cmd
 	struct s_cmd	*prev;
 }	t_cmd;
 
-//besoin de rajouter int infile et int outfile (fichier dentre/sortie/redirection)	
-// mais est ce que infile et outfile sont des variables de redir ou de data	/ ou cmd ??
-// genre si il y a un fichier d'entre ou est savariable ?
-
 //int start is used in expander for norm
 typedef struct s_data
 {
@@ -93,7 +89,6 @@ typedef struct s_data
 	int				size; //oeoeoe	
 	int				**pipes; //oeoeoe  
 	int				*child_pids; //oeoeoe
-	int 			exitcode; //oeoeoe
 }	t_data;
 
 //main
