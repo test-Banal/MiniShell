@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built_in.c                                         :+:      :+:    :+:   */
+/*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 15:24:40 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/29 14:49:02 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/08/30 12:14:46 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,25 +58,3 @@ void	unset_function(t_data *data, t_cmd *cmd)
 	printf("unset ta mere\n");
 }
 
-//oeoeoeoe
-bool	builtin_selection(t_data *data, int i)
-{
-	t_cmd	*cmd;
-
-	cmd = data->cmd + i;
-	if (ft_strncmp(cmd->args[0], "echo", 5) == 0)
-		echo_command(data, cmd);
-	else if (ft_strncmp(data->cmd[i].args[0], "exit", 5) == 0)
-		exit_command(data, cmd);
-	else if (ft_strncmp(cmd->args[0], "env", 4) == 0)
-		env_command(data, cmd);
-	else if (ft_strncmp(cmd->args[0], "pwd", 4) == 0)
-		pwd_command(data, cmd);
-	else if (ft_strncmp(cmd->args[0], "export", 7) == 0)
-		export_command(data, cmd);
-	else if (ft_strncmp(cmd->args[0], "unset", 6) == 0)
-		unset_command(data, cmd);
-	else if (ft_strncmp(cmd->args[0], "cd", 3) == 0)
-		cd_command(data, cmd);
-	return (true);
-}

@@ -22,6 +22,23 @@ bool    allocate_pids(t_data *data)
     return (true);
 }
 
+//attend la fin de chaque processus enfant, pour le processus parent
+bool    wait_pids(t_data *data)
+{
+    int i;
+    int status;
+
+    i = 0;
+    while (i < data->size)
+    {
+        waitpid(data->child_pids[i], &status, 0);
+        i++;
+    }
+    handle_exitcode(data, i, status);
+    return (true);
+}
+
+//exitcode,
 void   handle_exitcode(t_data *data, int i, int status)
 {
     if (WIFEXITED(status))

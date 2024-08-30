@@ -6,7 +6,7 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:43:33 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/30 10:21:01 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/08/30 12:15:00 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,6 @@ void			exit_function(t_data *data, t_cmd *cmd);
 void			export_function(t_data *data, t_cmd *cmd);
 void			pwd_function(t_data *data, t_cmd *cmd);
 void			unset_function(t_data *data, t_cmd *cmd);
-bool			builtin_selection(t_data *data, int i); //rajout fonction builtin
 
 //lexer
 int				lexer(char *line, struct s_data *data);
