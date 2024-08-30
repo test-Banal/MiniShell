@@ -6,7 +6,7 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:43:33 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/29 14:39:26 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/08/30 10:21:01 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,9 @@ typedef struct s_data
 	int				exit_code;
 	int				start;
 	int				size; //oeoeoe	
+	int				**pipes; //oeoeoe  
+	int				*child_pids; //oeoeoe
+	int 			exitcode; //oeoeoe
 }	t_data;
 
 //main
