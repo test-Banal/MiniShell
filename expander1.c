@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 15:10:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/28 16:43:27 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:17:53 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	find_end_var(char *str, int i)
 	while (str[i] && ((str[i] >= 'A' && str[i] <= 'Z')
 			|| (str[i] >= 'a' && str[i] <= 'z')
 			|| (str[i] >= '0' && str[i] <= '9')
-			|| str[i] == '_'))
+			|| str[i] == '_' || str[i] == '?'))
 		i++;
 	return (i);
 }
@@ -108,7 +108,7 @@ void	expander(t_data *data)
 		}
 		current = current->next;
 	}
-	expand_var(data);
+	// expand_var(data);
 	expand_var_quotes(data);
 	delete_quotes(data);
 }

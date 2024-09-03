@@ -6,13 +6,13 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 15:08:29 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/29 17:47:10 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/08/30 15:47:39 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	init_cmd(t_cmd **cmd, t_token *token)
+void	init_cmd(t_cmd **cmd, t_token *token, t_data *data)
 {
 	int	size;
 
@@ -23,9 +23,11 @@ void	init_cmd(t_cmd **cmd, t_token *token)
 	(*cmd)->built_in = NULL;
 	(*cmd)->next = NULL;
 	(*cmd)->prev = NULL;
-	(*cmd)->pipe = 0;
+	(*cmd)->pipe_in = 0;
+	(*cmd)->pipe_out = 1;
 	(*cmd)->redirection = NULL;
 	(*cmd)->heredoc = NULL;
+	(*cmd)->data_p = data;
 	size = get_cmd_size(token);
 	(*cmd)->args = ft_calloc(size + 1, sizeof(char *));
 	if (!(*cmd)->args)

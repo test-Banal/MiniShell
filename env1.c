@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   env1.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 11:59:37 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/29 17:53:59 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/03 11:40:18 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,11 @@ t_var	*init_env_var(char *name, char *value, int i)
 	if (!var)
 		return (NULL);
 	var->id = i;
-	var->name = name;
-	var->value = value;
+	var->name = ft_strdup(name);
+	if (value != NULL)
+		var->value = ft_strdup(value);
+	else
+		var->value = ft_strdup("");
 	var->next = NULL;
 	var->prev = NULL;
 	return (var);
@@ -86,18 +89,6 @@ void	add_var_list(t_data *data, t_var *var)
 	}
 }
 
-// void    printvar(t_data *data)
-// {
-//     t_var    *current;
-
-//     current = data->var;
-//     while (current != NULL)
-//     {
-//         printf("id = [%d]\nname = %s\nvalue = %s\n", current->id, current->name, current->value);
-//         current = current->next;
-//     }
-// }
-
 int	ft_env_to_lst(t_data *data, char **env)
 {
 	int		i;
@@ -117,70 +108,13 @@ int	ft_env_to_lst(t_data *data, char **env)
 		if (!var)
 			return (free(name), free(value), free_var_list(data), 0);
 		add_var_list(data, var);
+		free(name);
+		free(value);
 		i++;
 	}
-	return (1);
+	name = ft_strdup("?");
+	value = ft_itoa(data->exit_code);
+	var = init_env_var(name, value, i);
+	return (add_var_list(data, var), free(name), free(value), 1);
 }
 
-char	**var_list_to_tab(t_var *var)
-{
-	int		i;
-	int		len;
-	char	**dest;
-	t_var	*current;
-
-	len = ft_lstsize(var);
-	dest = malloc(sizeof(char *) * len + 1);
-	if (!dest)
-		return (NULL);
-	i = 0;
-	current = var;
-	while (current)
-	{
-		len = ft_strlen(current->name) + 1;
-		// len = ft_strlen(current->name) + ft_strlen(current->value) + 2;
-		dest[i] = malloc(sizeof(char) * len);
-		if (!dest[i])
-			return (free_mem(dest), NULL);
-		//peut etre ft_strcat est mieux, faut tester
-		dest[i] = ft_strjoin(dest[i], current->name);
-		dest[i] = ft_strjoin(dest[i], "=");
-		dest[i] = ft_strjoin(dest[i], current->value);
-		current = current->next;
-		i++;
-	}
-	dest[i] = NULL;
-	return (dest);
-}
-
-char	*is_var(char *str, int i, t_data *data, int end)
-{
-	t_var	*current;
-
-	current = data->var;
-	if (str[i] == '$'
-		&& (str[i + 1] == ' ' || str[i + 1] == '"'
-			|| str[i + 1] == '\0'))
-		return ("$");
-	while (current != NULL)
-	{
-		if (ft_strncmp(current->name, str + i + 1, end) == 0)
-			return (current->value);
-		current = current->next;
-	}
-	return (NULL);
-}
-
-int	var_lenght(char *str, t_data *data)
-{
-	t_var	*current;
-
-	current = data->var;
-	while (current != NULL)
-	{
-		if (ft_strcmp(current->value, str) == 0)
-			return (ft_strlen(current->name) + 1);
-		current = current->next;
-	}
-	return (0);
-}

@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:58:46 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/24 16:16:01 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/03 11:08:23 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,27 @@ int	is_double_quote(char c)
 	if (c == '"')
 		return (1);
 	return (0);
+}
+
+int	is_num(char c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
+int	is_strnum(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i])
+	{
+		if (!is_num(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }

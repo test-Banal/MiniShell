@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:28:50 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/28 16:46:25 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/03 10:43:06 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,15 @@ int	lexer(char *line, struct s_data *data)
 		return (0);
 	if (!check_quotes(line))
 	{
-		data->exit_code = 2;
+		set_exit_code(data, 2);
 		return (write(2, "Error\nUnclosed quotes\n", 22), 0);
 	}
 	while (line[start] != '\0')
 	{
 		if (line[start] && is_redirection(line, start))
 			lexer_redir(&line, &start, &end, data);
+		else if (line[start] && line[start] == '$')
+			lexer_var(&line, &start, &end, data);
 		else if (line[start] && is_word(line, start))
 			lexer_word(&line, &start, &end, data);
 		else if (line[start] && is_quote(line[start]))
@@ -38,6 +40,17 @@ int	lexer(char *line, struct s_data *data)
 		start++;
 	}
 	return (1);
+}
+
+void	lexer_var(char **line, int *start, int *end, t_data *data)
+{
+	char	*str;
+
+	*end = find_end_var_lexer(*line, *start);
+	str = ft_substr(*line, *start, *end - *start);
+	add_token(str, data, WORD);
+	*start = *end;
+	free(str);
 }
 
 void	lexer_redir(char **line, int *start, int *end, t_data *data)

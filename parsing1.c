@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:52:39 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/27 13:52:17 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/08/30 14:58:42 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 int	find_end_word(char *str, int i)
 {
+	int	start;
+
+	start = i;
 	while (str[i] && is_word(str, i))
 	{
 		i++;

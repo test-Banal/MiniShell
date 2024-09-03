@@ -6,69 +6,83 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:34:13 by aneumann          #+#    #+#             */
-/*   Updated: 2024/08/30 12:34:14 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/03 16:01:35 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//creation pipe, allocation pids, fonction exitcode, 
-
+int	is_simple_command(t_cmd *cmd)
+{
+	cmd->data_p->size = ft_cmd_lstsize(cmd);
+	if (cmd->data_p->size != 1)
+		return (0);
+	if (ft_strcmp(cmd->args[0], "export") == 0
+		|| ft_strcmp(cmd->args[0], "unset") == 0
+		|| ft_strcmp(cmd->args[0], "exit") == 0
+		|| ft_strcmp(cmd->args[0], "cd") == 0)
+		return (1);
+	return (0);
+}
 
 //alocate pid : creer un tableau de pid_t de la taille du nombre de commandes
 // et initialise chaque case a -1, pourque le processus parent verifier 
 //que le processus enfant a bien ete execute. 
-bool    allocate_pids(t_data *data)
+bool	allocate_pids(t_data *data)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    data->child_pids = malloc(sizeof(pid_t) * data->size);
-    if (!data->child_pids)
-        return (false);
-    while (i < data->size)
-    {
-        data->child_pids[i] = -1;
-        i++;
-    }
-    return (true);
+	i = 0;
+	data->size = ft_cmd_lstsize(data->cmd);
+	data->child_pids = malloc(sizeof(int) * data->size);
+	if (!data->child_pids)
+		return (false);
+	while (i < data->size)
+	{
+		data->child_pids[i] = -1;
+		i++;
+	}
+	return (true);
 }
 
-//attend la fin de chaque processus enfant, pour le processus parent
-bool    wait_pids(t_data *data)
+bool	ft_close_all_fds(t_redir *redir)
 {
-    int i;
-    int status;
+	t_redir	*current;
 
-    i = 0;
-    while (i < data->size)
-    {
-        waitpid(data->child_pids[i], &status, 0);
-        i++;
-    }
-    handle_exitcode(data, i, status);
-    return (true);
+	current = redir;
+	while (current)
+	{
+		if (current->id != -1)
+			close(current->id);
+		current = current->next;
+	}
+	return (true);
 }
 
-//exitcode,
-void   handle_exitcode(t_data *data, int i, int status)
+//exitcode
+void	handle_exitcode(t_data *data, int i, int status)
 {
-    if (WIFEXITED(status))
-    {
-        if (WEXITSTATUS(status) == 0)
-            data->exit_code = 0;
-        else
-            data->exit_code = 1;
-    }
-    else if (WIFSIGNALED(status))
-    {
-        if (WTERMSIG(status) == 2)
-            data->exit_code = 130;
-        else if (WTERMSIG(status) == 3)
-            data->exit_code = 131;
-        else
-            data->exit_code = 128 + WTERMSIG(status);
-    }
-    else
-        data->exit_code = 1;
+	printf("handle_exitcode 1 ok\n");
+	(void)i; // erreur de Makefile
+	if (WIFEXITED(status))
+	{
+		if (WEXITSTATUS(status) == 0)
+			set_exit_code(data, 0);
+		else
+			set_exit_code(data, WEXITSTATUS(status));
+		printf("handle_exitcode 2 ok\n");
+	}
+	else if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == 2)
+			set_exit_code(data, 130);
+		else if (WTERMSIG(status) == 3)
+			set_exit_code(data, 131);
+		else
+			set_exit_code(data, 128 + WTERMSIG(status));
+		printf("handle_exitcode 3 ok\n");
+	}
+	else
+		set_exit_code(data, 1);
 }
+

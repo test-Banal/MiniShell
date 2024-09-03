@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 17:35:58 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/27 15:04:13 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/03 11:48:37 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,27 +79,7 @@ char	*ft_strjoin2(char *s1, char const *s2)
 	return (dest);
 }
 
-char	*ft_strcat(char *s1, char *s2)
-{
-	int		i;
-	int		j;
-	char	*dest;
-
-	i = 0;
-	dest = NULL;
-	while (s1[i])
-	{
-		dest[i] = s1[i];
-		i++;
-	}
-	j = 0;
-	while (s2[j])
-		dest[i++] = s2[j++];
-	dest[i] = '\0';
-	return (dest);
-}
-
-int	ft_lstsize(t_var *var)
+int	ft_var_lstsize(t_var *var)
 {
 	int	i;
 
@@ -123,8 +103,10 @@ void	free_var_list(t_data *data)
 	while (current != NULL)
 	{
 		next = current->next;
-		free(current->name);
-		free(current->value);
+		if (current->name)
+			free(current->name);
+		if (current->value)
+			free(current->value);
 		free(current);
 		current = next;
 	}

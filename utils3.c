@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 19:07:18 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/28 13:31:14 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/08/30 16:22:59 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,25 @@ void	ft_putstr_fd(char *str, int fd)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return ;
 	while (str[i])
 	{
 		write(fd, &str[i], 1);
 		i++;
 	}
+}
+
+void	*ft_memset(void *s, int c, size_t n)
+{
+	unsigned char	*ptr;
+
+	ptr = (unsigned char *) s;
+	while (n > 0)
+	{
+		*ptr = (unsigned char) c;
+		ptr++;
+		n--;
+	}
+	return (s);
 }

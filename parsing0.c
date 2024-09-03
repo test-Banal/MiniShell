@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 18:17:09 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/24 16:11:31 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/08/30 14:57:39 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	is_separator(char c)
 int	is_word(char *str, int i)
 {
 	if (!(is_quote(str[i])) && !(is_whitespace(str[i]))
-		&& !(is_separator(str[i])))
+		&& !(is_separator(str[i]) && str[i] != '$'))
 		return (1);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 17:06:09 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/26 12:03:10 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/02 16:32:51 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,62 +49,3 @@ int	find_end_var_quote(char *str, int i)
 	}
 	return (len);
 }
-
-// char    *ft_substr_quotes(char *str, int i, t_data *data)
-// {
-//     char    *dest;
-//     char    *var;
-//     int     len;
-
-//     dest = ft_strdup("");
-//     len = 0;
-//     while (str[i])
-//     {
-//         if (str[i] && str[i] == '$')
-//         {
-//             len = find_end_var_quote(str, i);
-//             var = is_var(str, i, data, len);
-//             printf("var = %s\n", var);
-//             if (var)
-//                 dest = ft_strjoin(dest, var);
-//             i += len + 1;
-//         }
-//         else
-//         {
-//             dest = ft_strjoin_char(dest, str[i]);
-//             i++;
-//         }
-//         if (str[i] && str[i] == '"')
-//             break ;
-//     }
-//     return (dest);
-// }
-
-// char    *ft_substr_quotes(char *str, int i, t_data *data)
-// {
-//     char    *dest;
-//     char    *var;
-//     int     len;
-
-//     dest = ft_strdup("");
-//     len = 0;
-//     while (str[i])
-//     {
-//         if (str[i] && str[i] == '$')
-//         {
-//             len = find_end_var_quote(str, i);
-//             var = is_var(str, i, data, len);
-//             if (var)
-//                 dest = ft_strjoin(dest, var);
-//             i += len + 1;
-//         }
-//         else
-//         {
-//             dest = ft_strjoin_char(dest, str[i]);
-//             i++;
-//         }
-//         if (str[i] && str[i] == '"')
-//             break ;
-//     }
-//     return (dest);
-// }

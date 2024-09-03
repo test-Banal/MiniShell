@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 08:29:16 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/30 12:13:07 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/03 15:56:06 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	print_cmd_list(t_cmd *cmd_list)
 		}
 		else
 			printf("  Redirections: None\n");
-		printf("  Pipe: %s\n", current->pipe ? "Yes" : "No");
+		printf("  pipe_in = %d\n  pipe_out = %d\n", current->pipe_in, current->pipe_out);
 		if (current->built_in != NULL)
 			printf("  Built-in function: %p\n", current->built_in);
 		else
@@ -90,6 +90,7 @@ void	print_cmd_list(t_cmd *cmd_list)
 
 //ajouter un fonction reset pour revenir proprement dans la miniloop sans leaks etc
 //par exemple en cas de ctrl+D
+//free_data le fait mais il faut voir des cas precis 
 void	miniloop(t_data *data)
 {
 	char	*line;
@@ -100,30 +101,35 @@ void	miniloop(t_data *data)
 		if (line != NULL)
 		{
 			if (line[0] == '\0')
-				miniloop(data);
+				continue ;
 			add_history(line);
 			if (!lexer(line, data))
 			{
 				free(line);
-				miniloop(data);
+				continue ;
 			}
 			free(line);
-			printtoken(data);
+			//printtoken(data);
 			parser(data);
 			expander(data);
 			//test du parseur
-			print_cmd_list(data->cmd);
 ////////////////			// TA PARTIE COMMENCE ICI!!
-			// executor(data);
-			// exit provisoire, pour detecter des leaks
-			//pour utiliser la premiere commande doit etre exit
-			// A VOIR
+			print_cmd_list(data->cmd);
+			executor(data);
+			
+			// exemple de fonctionnement de built_in
 			// if (data->cmd->built_in != NULL)
-			// 	data->cmd->built_in();
-			// if (data->cmd->args != NULL && ft_strcmp(data->cmd->args[0], "exit") == 0)
-			// 	break ;
+			// 	data->cmd->built_in(data, data->cmd);
+			free_cmd_list(data);
 		}
 	}
+}
+
+void	free_data(t_data *data, int exit_code)
+{
+	free_cmd_list(data);
+	set_exit_code(data, exit_code);
+	miniloop(data);
 }
 
 int	main(int ac, char **av, char **env)
@@ -137,19 +143,20 @@ int	main(int ac, char **av, char **env)
 	data.cmd = NULL;
 	data.redir = NULL;
 	printf("\n%s\n", WELCOME);
-	ft_env_to_lst(&data, env);
 	builtins_init(&data);
+	ft_env_to_lst(&data, env);
 	miniloop(&data);
-	//une fonction pour free(); a ajouter pour gains de place / lisibilite
 	rl_clear_history();
 	free_var_list(&data);
-	free_cmd_list(&data);
-	return (0);
+	// free_cmd_list(&data);
+	return (data.exit_code);
 }
 
 //to do list
 /*  toute l'exec et redirections
-	gerer les redirections vides
+	gerer les redirections vides // probablement fini
+	peut etre refaire la tokenisation et expansion de variables ex: $PWD-test doit etre colle
+	gerer proprement l'exit code
     builtins
     signaux 
 */

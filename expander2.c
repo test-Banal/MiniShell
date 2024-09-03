@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:58:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/28 16:44:03 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:36:48 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,12 @@ void	check_for_var(t_data *data, char *str, t_cmd *current, int j)
 	int		i;
 	char	*tmp;
 	char	*dest;
+	char	*sign;
 
 	i = 0;
+	sign = NULL;
+	if (str[i] == '$' && ft_strlen(str) == 1)
+		sign = ft_strdup("$");
 	data->start = 0;
 	dest = ft_strdup("");
 	check_for_var2(data, &dest, &i, str);
@@ -73,7 +77,13 @@ void	check_for_var(t_data *data, char *str, t_cmd *current, int j)
 		free(tmp);
 	}
 	free(current->args[j]);
-	current->args[j] = ft_strdup(dest);
+	if (sign != NULL)
+	{
+		current->args[j] = ft_strdup(sign);
+		free(sign);
+	}
+	else
+		current->args[j] = ft_strdup(dest);
 	free(dest);
 }
 
@@ -90,7 +100,7 @@ void	expand_var_quotes(t_data *data)
 		i = 0;
 		while (current->args[i])
 		{
-			if (current->args[i][0] == '\"' && ft_strchr(current->args[i], '$'))
+			if (current->args[i][0] != '\'' && ft_strchr(current->args[i], '$'))
 			{
 				len = ft_strlen(current->args[i]);
 				tmp = ft_substr(current->args[i], 0, len);
@@ -103,27 +113,41 @@ void	expand_var_quotes(t_data *data)
 	}
 }
 
-void	expand_var(t_data *data)
+int	find_end_var_lexer(char *str, int i)
 {
-	t_cmd	*current;
-	int		i;
-	char	*tmp;
-
-	current = data->cmd;
-	while (current != NULL)
-	{
-		i = 0;
-		while (current->args[i])
-		{
-			if (current->args[i][0] == '$')
-			{
-				tmp = change_var(data, current->args[i] + 1);
-				free(current->args[i]);
-				current->args[i] = ft_strdup(tmp);
-				free(tmp);
-			}
-			i++;
-		}
-		current = current->next;
-	}
+	i++;
+	while (str[i] && !is_separator(str[i]))
+		i++;
+	return (i);
 }
+
+
+// void	expand_var(t_data *data)
+// {
+// 	t_cmd	*current;
+// 	int		i;
+// 	char	*tmp;
+
+// 	current = data->cmd;
+// 	while (current != NULL)
+// 	{
+// 		i = 0;
+// 		while (current->args[i])
+// 		{
+// 			if (current->args[i][0] == '$')
+// 			{
+// 				tmp = change_var(data, current->args[i] + 1);
+// 				if (current->args[i][0] == '$' && ft_strlen(current->args[i]) == 1)
+// 				{
+// 					free(tmp);
+// 					tmp = ft_strdup("$");
+// 				}
+// 				free(current->args[i]);
+// 				current->args[i] = ft_strdup(tmp);
+// 				free(tmp);
+// 			}
+// 			i++;
+// 		}
+// 		current = current->next;
+// 	}
+// }
