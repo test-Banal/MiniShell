@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 12:13:31 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/03 12:13:59 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/17 12:17:15 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,29 @@ int	is_n_option(char *str)
 
 void	echo_function(t_data *data, t_cmd *cmd)
 {
-	int	option_flag;
-	int	i;
+	int		option_flag;
+	int		i;
+	char	buffer[1024];
+	ssize_t	bytes_read;
 
+	(void)data;
+	bytes_read = 1;
+	if (cmd->prev != NULL)
+	{
+		while (bytes_read > 0)
+			bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
+	}
 	i = 1;
 	option_flag = 0;
-	(void)data;
 	if (cmd->args && cmd->args[1] != NULL)
 		option_flag = is_n_option(cmd->args[1]);
 	if (option_flag == 1)
 		i = 2;
 	while (cmd->args[i])
 	{
-		ft_putstr_fd(cmd->args[i], cmd->pipe_out);
-		ft_putstr_fd(" ", cmd->pipe_out);
+		printf("%s ", cmd->args[i]);
 		i++;
 	}
 	if (option_flag == 0)
-		ft_putstr_fd("\n", cmd->pipe_out);
+		printf("\n");
 }

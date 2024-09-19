@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 15:08:29 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/05 12:42:04 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/12 12:03:10 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ void	init_cmd(t_cmd **cmd, t_token *token, t_data *data)
 	(*cmd)->redirection = NULL;
 	(*cmd)->heredoc = NULL;
 	(*cmd)->data_p = data;
-	(*cmd)->fd = -1;
+	(*cmd)->fd_heredoc = -1;
+	(*cmd)->file = false;
 	size = get_cmd_size(token);
 	(*cmd)->args = ft_calloc(size + 1, sizeof(char *));
 	if (!(*cmd)->args)

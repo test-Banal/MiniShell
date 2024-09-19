@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:58:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/02 14:36:48 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/18 08:55:21 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,11 @@ char	*change_var(t_data *data, char *var_name)
 	{
 		if (ft_strcmp(current->name, var_name) == 0)
 		{
-			return (ft_strdup(current->value));
+			return (free(var_name), ft_strdup(current->value));
 		}
 		current = current->next;
 	}
+	free(var_name);
 	return (ft_strdup(""));
 }
 
@@ -34,10 +35,14 @@ void	check_for_var2(t_data *data, char **dest, int *i, char *str)
 	int		end;
 	char	*var_name;
 	char	*tmp;
+	int		in_single_quotes;
 
+	in_single_quotes = 0;
 	while (str[*i])
 	{
-		if (str[*i] == '$')
+		if (str[*i] == '\'')
+			in_single_quotes = 1;			
+		if (str[*i] == '$' && !in_single_quotes)
 		{
 			tmp = ft_substr(str, data->start, *i - data->start);
 			*dest = ft_strjoin(*dest, tmp);
@@ -45,7 +50,6 @@ void	check_for_var2(t_data *data, char **dest, int *i, char *str)
 			end = find_end_var(str, *i);
 			var_name = ft_substr(str, *i + 1, end - *i - 1);
 			var_value = change_var(data, var_name);
-			free(var_name);
 			*dest = ft_strjoin(*dest, var_value);
 			free(var_value);
 			*i = end;

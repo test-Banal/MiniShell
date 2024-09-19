@@ -6,10 +6,9 @@
 #    By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/28 11:54:39 by roarslan          #+#    #+#              #
-#    Updated: 2024/09/03 16:59:04 by roarslan         ###   ########.fr        #
+#    Updated: 2024/09/10 17:22:19 by roarslan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
 
 NAME = minishell
 
@@ -50,21 +49,24 @@ SRC = main.c \
 
 HEADER = minishell.h
 
-OBJ = $(SRC:.c=.o)
+OBJ_DIR = obj
+
+OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	$(CC) $(OBJ) -lreadline $(CFLAGS) -g3 -o $(NAME)
 
-%.o: %.c $(HEADER)
+$(OBJ_DIR)/%.o: %.c $(HEADER)
+	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-valgrind: all
+valgrind: $(NAME)
 	valgrind --suppressions=valgrind_readline_leaks_ignore.txt --leak-check=full --show-leak-kinds=all --track-fds=yes --trace-children=yes ./${NAME}
 
 clean:
-	rm -f $(OBJ)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -f $(NAME)
@@ -72,4 +74,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: clean fclean re all valgrind
-

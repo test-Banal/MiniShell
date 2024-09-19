@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:43:33 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/10 14:17:21 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/18 21:20:05 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <sys/wait.h>
 # include <string.h>
 # include <limits.h>
+# include <signal.h>
 
 # define WELCOME "\n\033[0;32m███╗   ███╗██╗███╗   ██╗██╗███████╗██╗  ██╗███████╗██╗     ██╗     \n\
 ████╗ ████║██║████╗  ██║██║██╔════╝██║  ██║██╔════╝██║     ██║     \n\
@@ -42,7 +43,7 @@
 
 //for get_next_line
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1042
+#  define BUFFER_SIZE 1024
 # endif
 
 typedef struct s_data t_data;
@@ -86,10 +87,8 @@ typedef struct s_cmd
 	int				pipe_in;
 	int				pipe_out;
 	char			*heredoc;
-	int				input;
-	// int				**pipes; //oeoeoeoe
-	int				output;
-	int				fd;
+	bool			file;
+	int				fd_heredoc; // probablement pas besoin
 	struct s_redir	*redirection;
 	struct s_cmd	*next;
 	struct s_cmd	*prev;
@@ -107,7 +106,7 @@ typedef struct s_data
 	void			(*built_in_functions[8])(struct s_data *data, t_cmd *cmd);
 	int				**pipes;
 	int				*child_pids;
-	int				size; 
+	int				size;
 	int				exit_code;
 	char			*pwd;
 	char			*old_pwd;
@@ -121,6 +120,7 @@ void			print_cmd_list(t_cmd *cmd_list); ////////test
 void			printtoken(t_data *data); // test
 void			miniloop(t_data *data);
 void			free_data(t_data *data, int exit_code);
+void			free_pipex(t_data *data);
 
 //utils1
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
@@ -155,7 +155,7 @@ char			*ft_strcpy(char *dest, char *src);
 int				is_pipe(char c);
 int				is_whitespace(char c);
 int				is_separator(char c);
-int				is_word(char *str, int i);
+int				is_word(char *str, int i, int in_quotes);
 int				is_redirection(char *str, int i);
 
 //parsing1
@@ -220,6 +220,7 @@ void			unset_function(t_data *data, t_cmd *cmd);
 void			unset_var(t_data *data, char *str);
 
 // export
+char			*get_value_export(char *str);
 void			export_var_with_value(char **args, t_data *data, int *i);
 void			export_without_value(char **args, t_data *data, int *i);
 int				is_env_var(char *str, t_var *var);
@@ -278,16 +279,16 @@ bool			allocate_pids(t_data *data);
 void			handle_exitcode(t_data *data, int i, int status);
 void			ft_redirect(t_cmd *cmd, int input, int output);
 bool			ft_waitpid(t_data *data);
-bool			ft_close_all_fds(t_redir *redir);
+bool			ft_close_all_fds(t_data *data);
 
 //pipex
 int				is_simple_command(t_cmd *cmd);
 int   			executor(t_data *data);
-bool			ft_create_pipes(t_data *data); //oeoeoeoeoe
-// int				ft_create_pipes(t_data *data);
+// bool			ft_create_pipes(t_cmd *cmd, int pipes_fd[2]); //oeoeoeoeoe
+bool			ft_create_pipes(t_data *data);
 // bool			ft_execute_cmd(t_cmd *cmd);
 bool			ft_execute_cmd(t_cmd *cmd, int index);
-void			child(t_cmd *cmd, int input, int output);
+void			child(t_cmd *cmd, t_data *data);
 bool            ft_execute_pipeline(t_data *data);
 void			copy_pipes(t_data *shell);
 
@@ -298,6 +299,10 @@ void			ft_open_redir_output(t_redir *redir);
 void			ft_open_redir_append(t_redir *redir);
 void			ft_open_redir_input(t_redir *redir);
 void			ft_open_redir_heredoc(t_redir *redir);
+void			ft_heredoc_handler(t_data *data);//ROB
+void			ft_heredoc_search(t_cmd *cmd);//ROB
+void			ft_handle_heredoc_helper(t_redir *redir, int fd, char *line);//ROB
+
 
 //get_next_line
 char			*get_next_line(int fd);

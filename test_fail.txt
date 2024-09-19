@@ -1,0 +1,111 @@
+tests :
+
+### des fd pas fermes surtout apres les redirections
+
+
+listes test posent probleme :
+- cat << EOF                 ### reparé
+- << eof cat | echo 6767 >> outfile    =>>> tourne dans le vide apres avoir fait le here_doc
+### ne tourne plus dans le vide mais fd ouvert dans parent et l'enfant 
+- cat Makefile | echo 123 | << eof >> outfile
+### SIGPIPE + leaks + fd ouverts dans enfants
+- 	var="Hello"
+	echo "$var World" > greeting.txt
+	cat greeting.txtcat Makefile | echo 123 | << eof 
+
+### j'ai change le fonctionnement du heredoc, ces commandes doivent marcher mtn
+### par contre pour declarer une variable la commande c'est:
+### export var=Hello
+### pour enlever une variable c'est unset var
+
+
+### faura checker si sans environnement "env -i ./minishell"
+### on doit quand meme pouvoir executer des commandes sans absolute path
+
+### toujours des fd pas fermes, surtout avec des redirections
+
+### se renseigner sur les signaux parce que pour l'instant ca ne marche po
+
+
+
+
+
+
+
+====>> tests failed (via Minishell Map) : 
+
+-	\n 	#pas exactement le meme message d'erreur
+- 	: 	#pas la meme sortie
+- 	!	# pareil
+-	> > > > #erreurs still reachable  + sortie du Maxishell !!!!! A VOIR ABSOLUMENT
+-	>> >> >> >> #idem
+-	\\	# pas la bonne sortie = pas le bon message d'erreur
+-	\\\\\\	# idem
+- 	-	# idem
+-	| 	#idem
+-	| hola	#idem
+-	Makefile #idem
+-	hola	#idem
+-	""''echo hola""'''' que ""'' tal""'' #pas du tout la meme sortie ! Maxishell :Error | bash :hola que tal
+-	echo -n -n 		#bash : rien , Maxishell : -n 
+-	echo -n -nnn -nnn 	#idem
+-	echo $?$ 		#bash 0? , Maxishell : 0
+-	echo $:$= | cat -e 	#pas la meme sortie
+-	echo " $ " | cat -e 	#idem
+-	echo \$HOME		#bash $HOME , Maxishell : \ /home/aneumann 
+-	echo my terminal is [$TERM4]	# un espace de trop
+-	echo $UID 		#bash : 106599, Maxishell : (rien)
+-	echo $9HOME		#bash : HOME , Maxishell : 
+-	echo $hola*		#pas du tout la meme sortie
+
+/////new jeudi 19/09
+
+-       echo '$HO''ME'          #bash : $HOME , Maxishell : $HO''ME  
+-	echo "$HO"ME		#pas la meme sortie
+-	echo "$HO""ME"		# idem
+-	echo "'$HO''ME'"	# idem
+-	echo ""$HOME		# idem
+-OK	echo "" $HOME 		# okkk
+-OK	echo '' $HOME 		# okkk
+-	echo $"HO""ME"		# idem
+-	echo $'HO''ME'		# idem
+-OK	echo $'HOME' 		# okk
+-	echo $=HOME		# idem
+-	echo $CHIPPS hola	# juste un espace en trop
+-	echo ''h'o'la''		# idem
+-OK	echo "''h'ol'la''"	# okk
+-	echo "'"h'o'la"'"	# idem
+
+(jarrete les tests echo a ligne [130, [153, 181] 224] <=> test effectue jusqua ligne 130, puis reprise a 153 jusqua environ 181, puis reprise 224)
+
+-	env Hola		#bash "No such file/directory" , Maxishell : comme env;
+-	env env			#petit doute
+-	env ls			#bash fais comme ls, Maxishell fait comme env
+-	export			#bash : export env, Maxishell : juste env
+-	export $DONTEXIST	#bash : export, Maxishell : (rien)
+-	export % 		#bash message d'erreur, Maxishell (rien) alors que "export =" okkkk
+-	export ?=2		#idem
+-	export Hola9hey puis env #pas le meme resultat
+(jarrete export ligne 244, reprise 331)
+	
+a priori unset c'est good (reprise ligne 381)
+-	pwd -p			#bash : error, Maxishell : (rien)
+-	pwd ---p		#idem
+
+-	(ATTENTION cd ///////)  # OK, tjrs ok qd resultat exepcted : pwd =  /
+-	cd /minishell		# cd dossier inexistant : Bash : msg d'erreur, Maxishell : (rien)
+- 	cd -			# bash : equivalent a cd .. : bash affiche chemin dossier precedent, Maxishell : (rien) 
+-	cd $HOME $HOME		# bash : msg d'error , Maxishell : (rien)
+-	cd "$PWD/srcs"		# bash : msg d'err0r, Maxishell : (rien)	
+
+
+
+
+
+
+=====>> tests failed fiche evaluation :
+
+-	revoir 'test only tabs" mais normalement c'est good tab fait appel au "T9' des fichiers
+-	try expr $? + $?  //marche tres bien, essaye echo 123 | exit  125 ; expr $? + $? VALIDE
+-	pas le meme exit code pour ce test : /bin/grep pattern fichier.txt
+-	pb exit code qd cmd incorrect : /bin/ls -z 

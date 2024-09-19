@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:28:50 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/03 10:43:06 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/18 21:25:09 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ int	lexer(char *line, struct s_data *data)
 	{
 		if (line[start] && is_redirection(line, start))
 			lexer_redir(&line, &start, &end, data);
-		else if (line[start] && line[start] == '$')
-			lexer_var(&line, &start, &end, data);
-		else if (line[start] && is_word(line, start))
+		// else if (line[start] && line[start] == '$')
+		// 	lexer_var(&line, &start, &end, data);
+		else if (line[start] && is_word(line, start, 0))
 			lexer_word(&line, &start, &end, data);
-		else if (line[start] && is_quote(line[start]))
-			lexer_quotes(&line, &start, &end, data);
+		// else if (line[start] && is_quote(line[start]))
+		// 	lexer_quotes(&line, &start, &end, data);
 		else if (line[start] && is_whitespace(line[start]))
 		start++;
 	}

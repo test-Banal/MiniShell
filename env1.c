@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 11:59:37 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/05 16:19:52 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/10 16:53:41 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ char	*get_value(char *str)
 	if (!str[i])
 		return (ft_strdup(""));
 	i++;
-	if (str[i] == '=' || str[i] == '+')
-		i++;
 	dest = malloc(sizeof(char) * (ft_strlen(str) - i + 1));
 	if (!dest)
 		return (NULL);

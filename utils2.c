@@ -6,7 +6,7 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 19:04:34 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/03 12:00:55 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/13 18:09:15 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ void	free_cmd_list(t_data *data)
 			free_mem(current->args);
 		if (current->redirection != NULL)
 			free_redir_list(current->redirection);
+		if (current->heredoc != NULL)
+			free(current->heredoc);
 		free(current);
 		current = next;
 	}

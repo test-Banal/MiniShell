@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 15:10:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/02 14:17:53 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/18 21:20:44 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	delete_quotes(t_data *data)
 	t_cmd	*current;
 	int		i;
 	char	*tmp;
+	char	*new_str;
 	int		len;
 
 	current = data->cmd;
@@ -73,25 +74,56 @@ void	delete_quotes(t_data *data)
 		i = 0;
 		while (current->args[i])
 		{
-			if (current->args[i][0] == '\'' || current->args[i][0] == '\"')
-			{
-				len = ft_strlen(current->args[i]) - 2;
-				tmp = ft_substr(current->args[i], 1, len);
-				free(current->args[i]);
-				current->args[i] = ft_strdup(tmp);
-				free(tmp);
-			}
+			tmp = current->args[i];
+			len = ft_strlen(tmp);
+			if ((tmp[0] == '\'' && tmp[len - 1] == '\'')
+				|| (tmp[0] == '\"' && tmp[len - 1] == '\"'))
+				new_str = ft_substr(tmp, 1, len - 2);
+			else
+				new_str = ft_strdup(tmp);
+			free(current->args[i]);
+			current->args[i] = new_str;
 			i++;
 		}
 		current = current->next;
 	}
 }
 
+// void	delete_quotes(t_data *data)
+// {
+// 	t_cmd	*current;
+// 	int		i;
+// 	char	*tmp;
+// 	int		len;
+
+// 	current = data->cmd;
+// 	while (current != NULL)
+// 	{
+// 		i = 0;
+// 		while (current->args[i])
+// 		{
+// 			if (current->args[i][0] == '\'' || current->args[i][0] == '\"')
+// 			{
+// 				len = ft_strlen(current->args[i]) - 2;
+// 				tmp = ft_substr(current->args[i], 1, len);
+// 				free(current->args[i]);
+// 				current->args[i] = ft_strdup(tmp);
+// 				free(tmp);
+// 			}
+// 			i++;
+// 		}
+// 		current = current->next;
+// 	}
+// }
+
 void	expander(t_data *data)
 {
 	char	*tmp;
 	t_cmd	*current;
 
+	// expand_var(data);
+	expand_var_quotes(data);
+	delete_quotes(data);//? a refaire differement si des quotes ne sont pas supprimes avant
 	current = data->cmd;
 	tmp = NULL;
 	while (current != NULL)
@@ -108,7 +140,4 @@ void	expander(t_data *data)
 		}
 		current = current->next;
 	}
-	// expand_var(data);
-	expand_var_quotes(data);
-	delete_quotes(data);
 }

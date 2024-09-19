@@ -3,14 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 15:45:43 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/05 16:35:51 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/17 15:16:36 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char	*get_value_export(char *str)
+{
+	char	*dest;
+	int		i;
+	int		j;
+
+	i = 0;
+	while (str[i] && str[i] != '=' && str[i] != '+')
+		i++;
+	if (!str[i])
+		return (ft_strdup(""));
+	i++;
+	if (str[i] == '=' || str[i] == '+')
+		i++;
+	dest = malloc(sizeof(char) * (ft_strlen(str) - i + 1));
+	if (!dest)
+		return (NULL);
+	j = 0;
+	while (str[i])
+		dest[j++] = str[i++];
+	dest[j] = '\0';
+	return (dest);
+}
 
 void	update_var(t_var *var, char *new_value)
 {
@@ -34,7 +58,7 @@ void	export_var_with_value(char **args, t_data *data, int *i)
 	char	*name;
 	char	*value;
 	t_var	*var;
-	
+
 	name = get_name(args[*i]);
 	value = get_value(args[*i]);
 	var = data->var;
@@ -62,7 +86,7 @@ void	export_without_value(char **args, t_data *data, int *i)
 {
 	char	*name;
 	t_var	*var;
-	
+
 	var = data->var;
 	name = get_name(args[*i]);
 	while (var != NULL)
@@ -81,23 +105,62 @@ void	export_without_value(char **args, t_data *data, int *i)
 	(*i)++;
 }
 
+// void	ft_print_export(t_data *data, t_cmd *cmd)
+// {
+// 	t_var	*current;
+
+// 	current = data->var;
+// 	while (current != NULL)
+// 	{
+// 		// printf("PIPE OUT = %d\n", cmd->pipe_out);
+// 		ft_putstr_fd(current->name, cmd->pipe_out);
+// 		if (ft_strcmp(current->value, "") == 0)
+// 			ft_putstr_fd("=\"\"", cmd->pipe_out);
+// 		else
+// 		{
+// 			ft_putstr_fd("=\"", cmd->pipe_out);
+// 			ft_putstr_fd(current->value, cmd->pipe_out);
+// 			ft_putstr_fd("\"", cmd->pipe_out);
+// 		}
+// 		ft_putstr_fd("\n", cmd->pipe_out);
+// 		current = current->next;
+// 	}
+// }
+
+// void	ft_print_export(t_data *data, t_cmd *cmd)
+// {
+// 	t_var	*current;
+
+// 	current = data->var;
+// 	(void)cmd;
+// 	while (current != NULL)
+// 	{
+// 		printf("%s", current->name);
+// 		if (ft_strcmp(current->value, "") == 0)
+// 			printf("=\"\"");
+// 		else
+// 			printf("=\"%s\"", current->value);
+// 		printf("\n");
+// 		current = current->next;
+// 	}
+// }
+
 void	ft_print_export(t_data *data, t_cmd *cmd)
 {
 	t_var	*current;
 
 	current = data->var;
+	(void)cmd;
 	while (current != NULL)
-	{		
-		ft_putstr_fd(current->name, cmd->pipe_out);
+	{
+		printf("%s", current->name);
 		if (ft_strcmp(current->value, "") == 0)
-			ft_putstr_fd("=\"\"", cmd->pipe_out);
+			printf("=\"\"");
 		else
 		{
-			ft_putstr_fd("=\"", cmd->pipe_out);
-			ft_putstr_fd(current->value, cmd->pipe_out);
-			ft_putstr_fd("\"", cmd->pipe_out);
+			printf("=\"%s\"", current->value);
 		}
-		ft_putstr_fd("\n", cmd->pipe_out);
+		printf("\n");
 		current = current->next;
 	}
 }

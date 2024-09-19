@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:34:13 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/10 15:23:12 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/13 15:03:54 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@ int	is_simple_command(t_cmd *cmd)
 	cmd->data_p->size = ft_cmd_lstsize(cmd);
 	if (cmd->data_p->size != 1)
 		return (0);
-	if (ft_strcmp(cmd->args[0], "export") == 0
+	if (cmd->args[0] && (ft_strcmp(cmd->args[0], "export") == 0
 		|| ft_strcmp(cmd->args[0], "unset") == 0
 		|| ft_strcmp(cmd->args[0], "exit") == 0
-		|| ft_strcmp(cmd->args[0], "cd") == 0)
+		|| ft_strcmp(cmd->args[0], "cd") == 0))
 		return (1);
 	return (0);
 }
@@ -65,18 +65,17 @@ bool	allocate_pids(t_data *data)
 	return (true);
 }
 
-// redir->id n'est pas un fd
-//cette fontion ne ferme pas les fd!
-// a refaire ouaip
-bool	ft_close_all_fds(t_redir *redir)
+bool	ft_close_all_fds(t_data *data)
 {
-	t_redir	*current;
+	t_cmd	*current;
 
-	current = redir;
-	while (current)
+	current = data->cmd;
+	while (current != NULL)
 	{
-		if (current->id != -1)
-			close(current->id);
+		if (!isatty(current->pipe_in))
+			close(current->pipe_in);
+		if (!isatty(current->pipe_out))
+			close(current->pipe_out);
 		current = current->next;
 	}
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:52:34 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/05 12:37:48 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/17 17:13:34 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void	check_redir_syntax2(t_data *data, t_cmd *cmd)
 		}
 		if (count % 2 != 0)
 		{
+			ft_putstr_fd("syntax error\n", 2);
 			set_exit_code(data, 2);
 			free_cmd_list(data);
 			miniloop(data);
@@ -96,7 +97,7 @@ void	add_redirection(t_cmd *cmd, t_token *token)
 	new->index = token->index;
 	new->id = token->id;
 	new->str = ft_strdup(token->str);
-	new->path = getcwd(NULL, 0);///////////////// a tester, peut etre chercher $PWD a la place
+	new->path = getcwd(NULL, 0); ///////////////// a tester, peut etre chercher $PWD a la place
 	new->data = cmd->data_p;
 	new->cmd = cmd;
 	new->next = NULL;

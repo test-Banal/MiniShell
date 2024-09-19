@@ -18,3 +18,15 @@
    ...
    obj:*grep*
 }
+{
+	ignore_all_expr_leaks
+	Memcheck:Leak
+	...
+	obj:*expr*
+}
+{
+	ignore_all_clear_leaks
+	Memcheck:Leak
+	...
+	obj:*clear*
+}

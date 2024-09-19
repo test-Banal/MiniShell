@@ -6,25 +6,52 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/01 13:52:39 by roarslan          #+#    #+#             */
-/*   Updated: 2024/08/30 14:58:42 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/18 21:14:15 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// int	find_end_word(char *str, int i)
+// {
+// 	int	start;
+
+// 	start = i;
+// 	while (str[i] && is_word(str, i))
+// 		i++;
+// 	if (!str[i])
+// 		return (i);
+// 	return (i);
+// }
+
 int	find_end_word(char *str, int i)
 {
-	int	start;
+	int 	start;
+	char	quote_char;
+	int		in_quotes;
 
 	start = i;
-	while (str[i] && is_word(str, i))
+	in_quotes = 0;
+	quote_char = '\0';
+	while (str[i])
 	{
-		i++;
-		if ((str[i - 1] && str[i - 1] != '$') && str[i] == '$')
+		if (is_quote(str[i]) && (!in_quotes || str[i] == quote_char))
+		{
+			if (!in_quotes)
+			{
+				in_quotes = 1;
+				quote_char = str[i];
+			}
+			else
+			{
+				in_quotes = 0;
+				quote_char = '\0';
+			}
+		}
+		else if (!in_quotes && !is_word(str, i, in_quotes))
 			break ;
+		i++;
 	}
-	if (!str[i])
-		return (i);
 	return (i);
 }
 

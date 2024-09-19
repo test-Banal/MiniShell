@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:21:51 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/03 16:54:56 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/12 11:23:24 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,9 @@ char	**var_list_to_tab(t_var *var)
 	current = var;
 	while (current)
 	{
-		len = ft_strlen(current->name) + ft_strlen(current->value) + 2;
-		dest[i] = malloc(sizeof(char) * len);
-		if (!dest[i])
-			return (free_mem(dest), NULL);
-		dest[i] = ft_strcpy(dest[i], current->name);
-		dest[i] = ft_strcpy(dest[i], "=");
-		dest[i] = ft_strcpy(dest[i], current->value);
+		dest[i] = ft_strdup(current->name);
+		dest[i] = ft_strjoin(dest[i], "=");
+		dest[i] = ft_strjoin(dest[i], current->value);
 		current = current->next;
 		i++;
 	}

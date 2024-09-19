@@ -6,11 +6,18 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 08:29:16 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/10 15:22:34 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/18 21:37:18 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+//variable globale
+//g_signals[0] = SIGQUIT ctrl+\
+//g_signals[1] = SIGINT ctrl+C
+//g_signals[2] = EOF ctrl+D
+//a rajouter des cas?
+int	global_sig[3];
 
 void	printtoken(t_data *data)
 {
@@ -26,6 +33,8 @@ void	printtoken(t_data *data)
 
 void	builtins_init(t_data *data)
 {
+	data->pipes = NULL;
+	data->child_pids = NULL;
 	data->pwd = NULL;
 	data->old_pwd = NULL;
 	data->exit_code = 0;
@@ -46,6 +55,9 @@ void	builtins_init(t_data *data)
 	data->built_in_functions[6] = &unset_function;
 	data->built_in_functions[7] = NULL;
 	data->cmd = NULL;
+	global_sig[0] = 0;
+	global_sig[1] = 0;
+	global_sig[2] = 0;
 }
 
 void	print_cmd_list(t_cmd *cmd_list)
@@ -82,9 +94,17 @@ void	print_cmd_list(t_cmd *cmd_list)
 			printf("  Built-in function: %p\n", current->built_in);
 		else
 			printf("  Built-in function: None\n");
-		printf("  FD = %d\n", current->fd);
+		printf("  FD = %d\n", current->fd_heredoc);
 		current = current->next;
 	}
+}
+
+//marche pas encore :(
+void	sigint_handler(int signum)
+{
+	(void)signum;
+	write(1, "^C", 2);
+	global_sig[2] = 1;
 }
 
 //ajouter un fonction reset pour revenir proprement dans la miniloop sans leaks etc
@@ -96,7 +116,14 @@ void	miniloop(t_data *data)
 
 	while (42)
 	{
-		line = readline("Minishell> ");
+		// signal(SIGINT, &sigint_handler);
+		line = readline("[Minishell]: ");
+		// if (global_sig[2] == 1)
+		// {
+		// 	global_sig[2] = 0;
+		// 	continue ;
+		// }
+		// signal(SIGINT, SIG_DFL);
 		if (line != NULL)
 		{
 			if (line[0] == '\0')
@@ -108,15 +135,12 @@ void	miniloop(t_data *data)
 				continue ;
 			}
 			free(line);
-			//printtoken(data);
+			// printtoken(data);
 			parser(data);
 			expander(data);
-			if (!executor(data))
-			{
-				free_cmd_list(data);
-				continue ;
-			}
 			// print_cmd_list(data->cmd);
+			executor(data);
+			free_pipex(data);
 			free_cmd_list(data);
 		}
 	}
@@ -127,13 +151,22 @@ void	free_pipex(t_data *data)
 	int	i;
 
 	i = 0;
-	while (i < 2)
+	if (data->pipes)
 	{
-		if (data->pipes[i])
-			free(data->pipes[i]);
+		while (i < ft_cmd_lstsize(data->cmd))
+		{
+			if (data->pipes[i])
+				free(data->pipes[i]);
+			i++;
+		}
+		free(data->pipes);
+		data->pipes = NULL;
 	}
-	free(data->pipes);
-	free(data->child_pids);
+	if (data->child_pids)
+	{
+		free(data->child_pids);
+		data->child_pids = NULL;
+	}
 }
 
 void	free_data(t_data *data, int exit_code)
@@ -165,13 +198,13 @@ int	main(int ac, char **av, char **env)
 	return (data.exit_code);
 }
 
-
-
 //to do list
-/*  toute l'exec et redirections
-	gerer les redirections vides // probablement fini
-	affichage different entre export truc et export truc=
-	gerer proprement l'exit code
-    builtins
+/* 
+	gestion d'exit_code pas top -> command not found ne change pas de valeur d'exit code dans le parent
+	checker les commandes vides!!!
+	refonte de la fonction handle_exitcode();
+	dans le parser checker id de la redirection par exemple < <,
+	accesoirement refaire le syntax check des redirections
+	affichage different entre export truc et export truc=   ?
     signaux 
 */

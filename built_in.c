@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 15:24:40 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/05 16:38:55 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/18 21:41:59 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,34 +17,47 @@ void	env_function(t_data *data, t_cmd *cmd)
 	t_var	*current;
 
 	current = data->var;
+	(void)cmd;
 	while (current != NULL)
 	{
-		if (current->name != NULL && current->value != NULL && current->value[0] != '\0')
+		if (current->name != NULL && current->value != NULL \
+				&& current->value[0] != '\0')
 		{
-			ft_putstr_fd(current->name, cmd->pipe_out);
-			ft_putstr_fd("=", cmd->pipe_out);
-			ft_putstr_fd(current->value, cmd->pipe_out);
-			ft_putstr_fd("\n", cmd->pipe_out);
+			printf("%s=%s\n", current->name, current->value);
 		}
 		current = current->next;
 	}
+	if (cmd->pipe_in != STDIN_FILENO)
+		close(cmd->pipe_in);
 }
 
 //provisoire?
 void	pwd_function(t_data *data, t_cmd *cmd)
 {
-	t_var	*current;
+	char	*pwd;
+	char	buffer[1024];
+	ssize_t	bytes_read;
+	int		i;
 
-	current = data->var;
-	while (current != NULL)
+	(void)data;
+	bytes_read = 1;
+	if (cmd->prev != NULL)
 	{
-		if (ft_strcmp(current->name, "PWD") == 0)
+		while (bytes_read > 0)
+			bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
+	}
+	pwd = getcwd(NULL, 0);
+	printf("%s\n", pwd);
+	free(pwd);
+	i = 1;
+	if (tab_size(cmd->args) > 1)
+	{
+		while (cmd->args[i])
 		{
-			ft_putstr_fd(current->value, cmd->pipe_out);
-			ft_putstr_fd("\n", cmd->pipe_out);
-			break ;
+			printf(" %s ", cmd->args[i]);
+			i++;
 		}
-		current = current->next;
+		printf(" invalid option(s)\n");
 	}
 }
 
@@ -78,14 +91,12 @@ void	append_value(t_data *data, char **args, int *i)
 	new_value = NULL;
 	current = data->var;
 	name = get_name(args[*i]);
-	value = get_value(args[*i]);
-	printf("NAME = %s\nVALUE = %s\n", name, value);
+	value = get_value_export(args[*i]);// a tester avec truc= et truc, l'affichage doit etre different
 	while (current != NULL)
 	{
 		if (ft_strcmp(current->name, name) == 0)
 		{
 			new_value = ft_strjoin2(current->value, value);
-			printf("NEW VALUE = %s\n", new_value);
 			update_var(current, new_value);
 			free(value);
 			free(name);
@@ -99,6 +110,7 @@ void	append_value(t_data *data, char **args, int *i)
 	export_var_with_value(args, data, i);
 }
 
+//a tester encore un peu
 void	export_function(t_data *data, t_cmd *cmd)
 {
 	t_var	*current;
@@ -110,7 +122,7 @@ void	export_function(t_data *data, t_cmd *cmd)
 	{
 		ft_print_export(data, cmd);
 		return ;
-	} 
+	}
 	while (cmd->args[i] != NULL)
 	{
 		if (ft_strstr_1(cmd->args[i], "+="))
@@ -119,7 +131,9 @@ void	export_function(t_data *data, t_cmd *cmd)
 			export_error(data, cmd->args[i]);
 		if (cmd->args[i] && ft_strchr(cmd->args[i], '='))
 			export_var_with_value(cmd->args, data, &i);
-		else if (cmd->args[i] && ft_strchr(cmd->args[i], '='))
+		else if (cmd->args[i] && !ft_strchr(cmd->args[i], '='))
 			export_without_value(cmd->args, data, &i);
 	}
+	if (cmd->prev != NULL && cmd->prev->pipe_out != STDOUT_FILENO)
+		close(cmd->prev->pipe_out);
 }
