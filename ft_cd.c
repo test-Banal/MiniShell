@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:17:44 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/18 21:46:43 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 11:05:03 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,15 +70,8 @@ void	cd_function(t_data *data, t_cmd *cmd)
 {
 	char	*pwd;
 	char	*oldpwd;
-	char	buffer[1024];
-	ssize_t	bytes_read;
 
-	bytes_read = 1;
-	if (cmd->prev != NULL)
-	{
-		while (bytes_read > 0)
-			bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
-	}
+	read_pipe_in(cmd);
 	if (tab_size(cmd->args) > 2)
 	{
 		ft_putstr_fd("cd: too many arguments\n", 2);

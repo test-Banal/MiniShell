@@ -91,13 +91,15 @@ listes test posent probleme :
 a priori unset c'est good (reprise ligne 381)
 -	pwd -p			#bash : error, Maxishell : (rien)
 -	pwd ---p		#idem
+-	pwd ls			# bash : pwd classique, Maxishell :pwd classique + msg error ls
+
 
 -	(ATTENTION cd ///////)  # OK, tjrs ok qd resultat exepcted : pwd =  /
 -	cd /minishell		# cd dossier inexistant : Bash : msg d'erreur, Maxishell : (rien)
 - 	cd -			# bash : equivalent a cd .. : bash affiche chemin dossier precedent, Maxishell : (rien) 
 -	cd $HOME $HOME		# bash : msg d'error , Maxishell : (rien)
 -	cd "$PWD/srcs"		# bash : msg d'err0r, Maxishell : (rien)	
-
+-	cd _			#OKKKKKKKKK
 
 
 
@@ -109,3 +111,6 @@ a priori unset c'est good (reprise ligne 381)
 -	try expr $? + $?  //marche tres bien, essaye echo 123 | exit  125 ; expr $? + $? VALIDE
 -	pas le meme exit code pour ce test : /bin/grep pattern fichier.txt
 -	pb exit code qd cmd incorrect : /bin/ls -z 
+
+-QUESTION : normal que clear ne fonction hors du projet ? ex pwd : /home/aneumann =>  FATAL: can't open suppressions file "valgrind_readline_leaks_ignore.txt"
+

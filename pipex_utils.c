@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:34:13 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/13 15:03:54 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 11:19:34 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,17 +82,14 @@ bool	ft_close_all_fds(t_data *data)
 }
 
 //exitcode
-void	handle_exitcode(t_data *data, int i, int status)
+void	handle_exitcode(t_data *data, int status)
 {
-	//printf("handle_exitcode 1 ok\n");
-	(void)i; // erreur de Makefile
 	if (WIFEXITED(status))
 	{
 		if (WEXITSTATUS(status) == 0)
 			set_exit_code(data, 0);
 		else
 			set_exit_code(data, WEXITSTATUS(status));
-	//	printf("handle_exitcode 2 ok\n");
 	}
 	else if (WIFSIGNALED(status))
 	{
@@ -102,7 +99,6 @@ void	handle_exitcode(t_data *data, int i, int status)
 			set_exit_code(data, 131);
 		else
 			set_exit_code(data, 128 + WTERMSIG(status));
-	//	printf("handle_exitcode 3 ok\n");
 	}
 	else
 		set_exit_code(data, 1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:43:33 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/18 21:20:05 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:16:07 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,11 @@
 # define LESS_LESS 4
 # define MORE_MORE 5
 # define WORD 6
+
+# define GREEN "\033[0;32m"
+# define RESET "\033[0m"
+ 
+ # define CHILD 2
 
 //for get_next_line
 # ifndef BUFFER_SIZE
@@ -150,6 +155,7 @@ int				ft_cmd_lstsize(t_cmd *cmd);
 char			*ft_strcat(char *s1, char *s2);
 int				tab_size(char **tab);
 char			*ft_strcpy(char *dest, char *src);
+void			read_pipe_in(t_cmd *cmd);
 
 //parsing0
 int				is_pipe(char c);
@@ -276,7 +282,7 @@ int				find_end_var_lexer(char *str, int i);
 
 //pipex_utils
 bool			allocate_pids(t_data *data);
-void			handle_exitcode(t_data *data, int i, int status);
+void			handle_exitcode(t_data *data, int status);
 void			ft_redirect(t_cmd *cmd, int input, int output);
 bool			ft_waitpid(t_data *data);
 bool			ft_close_all_fds(t_data *data);
@@ -303,11 +309,16 @@ void			ft_heredoc_handler(t_data *data);//ROB
 void			ft_heredoc_search(t_cmd *cmd);//ROB
 void			ft_handle_heredoc_helper(t_redir *redir, int fd, char *line);//ROB
 
-
 //get_next_line
 char			*get_next_line(int fd);
 char			*ft_strjoin_gnl(char const *s1, char const *s2);
 char			*ft_strdup_gnl(char const *s);
 char			*ft_strchr_gnl(char const *s, int c);
+
+//signaux
+void	heredoc_signal(int status); //dans le fichier open-utils.c
+void	c_signal(int status);
+void	signal_handler(int signum);
+
 
 #endif

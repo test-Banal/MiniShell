@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 12:13:31 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/17 12:17:15 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 11:06:39 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,9 @@ void	echo_function(t_data *data, t_cmd *cmd)
 {
 	int		option_flag;
 	int		i;
-	char	buffer[1024];
-	ssize_t	bytes_read;
 
 	(void)data;
-	bytes_read = 1;
-	if (cmd->prev != NULL)
-	{
-		while (bytes_read > 0)
-			bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
-	}
+	read_pipe_in(cmd);
 	i = 1;
 	option_flag = 0;
 	if (cmd->args && cmd->args[1] != NULL)

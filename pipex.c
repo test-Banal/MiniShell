@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:34:26 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/18 21:31:06 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:15:49 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-extern int	global_sig[3];
+//extern int	global_sig[3];
+int		g_sig = 0;
+
 
 void	assign_pipes(t_cmd *cmd, int **pipes, int cmd_index, int total_cmds)
 {
@@ -178,7 +180,7 @@ bool ft_execute_cmd(t_cmd *cmd, int index)
 {
 	pid_t	pid;
 
-	// signal(SIGQUIT, SIG_DFL);// aa tester
+    // signal(SIGQUIT, SIG_DFL);// aa tester
     if (!ft_open_redir(cmd->data_p))
 	{
 		perror("redirection failed");
@@ -190,6 +192,8 @@ bool ft_execute_cmd(t_cmd *cmd, int index)
 		return (perror("fork"), false);
 	if (pid == 0)
 	{
+		// signal(SIGINT, SIG_DFL); //desactive la gestion des signaux dans le fils
+    	// signal(SIGQUIT, SIG_DFL);
 		ft_redirect(cmd, cmd->pipe_in, cmd->pipe_out);
 		ft_close_fds_child(cmd->data_p);
 		// if (cmd->pipe_out != STDOUT_FILENO)
@@ -229,7 +233,7 @@ bool ft_waitpid(t_data *data)
             perror("waitpid");
             return (false);
         }
-        handle_exitcode(data, i, status);
+        handle_exitcode(data, status);
         i++;
     }
     return (true);
@@ -251,16 +255,16 @@ void	sigquit_handler(int signum)
 	(void)signum;
 	msg = "^\\Quit (core dumped)\n";
 	write(STDERR_FILENO, msg, ft_strlen(msg));
-	global_sig[0] = 1;
+	//global_sig[0] = 1;
 }
 
 void	ft_execve_error(char *str, char **tab, t_data *data)
 {
 	perror("execve");
+	handle_exitcode(data, 127);//?
 	free(str);
 	free_mem(tab);
 	free_pipex(data);
-	set_exit_code(data, EXIT_FAILURE);
 	free_var_list(data);
 	free_cmd_list(data);
 	exit(EXIT_FAILURE);
@@ -271,7 +275,11 @@ void child(t_cmd *cmd, t_data *data)
 	char	**tab;
 	char	*str;
 
-	signal(SIGQUIT, &sigquit_handler);
+	//signal(SIGQUIT, &sigquit_handler);
+	// signal(SIGINT, &c_signal);
+    // signal(SIGQUIT, SIG_DFL);
+	
+		
 	if (cmd->built_in != NULL)
 		execute_builtin(data, cmd);
 	if (cmd->args[0])
@@ -285,18 +293,27 @@ void child(t_cmd *cmd, t_data *data)
 	}
 	tab = var_list_to_tab(data->var);
 	//global variable for sigquit check
-	if (global_sig[0] == 1)
-	{
-		free(str);
-		free_mem(tab);
-		free_pipex(data);
-		free_var_list(data);
-		free_cmd_list(data);
-		exit(EXIT_FAILURE);
-	} 
+	// if (global_sig[0] == 1)
+	// {
+	// 	free(str);
+	// 	free_mem(tab);
+	// 	free_pipex(data);
+	// 	free_var_list(data);
+	// 	free_cmd_list(data);
+	// 	exit(EXIT_FAILURE);
+	// } 
     signal(SIGQUIT, SIG_DFL);
 	if (execve(str, cmd->args, tab) == -1)
 		ft_execve_error(str, tab, data);
+}
+
+void	c_signal(int status)
+{
+	if (status == SIGINT)
+	{
+		write(STDERR_FILENO, "\n", 1);
+		g_sig = 1;
+	}
 }
 
 void ft_redirect(t_cmd *cmd, int input, int output)

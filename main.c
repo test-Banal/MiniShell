@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 08:29:16 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/18 21:37:18 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:16:00 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,12 +100,25 @@ void	print_cmd_list(t_cmd *cmd_list)
 }
 
 //marche pas encore :(
-void	sigint_handler(int signum)
+// void	sigint_handler(int signum)
+// {
+// 	(void)signum;
+// 	write(1, "^C", 2);
+// 	global_sig[2] = 1;
+// }
+
+
+void	signal_handler(int signum)
 {
-	(void)signum;
-	write(1, "^C", 2);
-	global_sig[2] = 1;
+	if (signum == SIGINT) //Ctrl-C
+		write(STDERR_FILENO, "\n", 1);
+	else if (signum == CHILD)
+	{
+		signal(SIGINT, &c_signal);
+		signal(SIGQUIT, SIG_DFL);
+	}
 }
+
 
 //ajouter un fonction reset pour revenir proprement dans la miniloop sans leaks etc
 //par exemple en cas de ctrl+D
@@ -116,8 +129,16 @@ void	miniloop(t_data *data)
 
 	while (42)
 	{
-		// signal(SIGINT, &sigint_handler);
-		line = readline("[Minishell]: ");
+		signal(SIGINT, &signal_handler);
+		signal(SIGQUIT, SIG_IGN);
+
+		//line = readline("[Minishell]: ");
+		line = readline(GREEN"[MINISHELL]: "RESET);
+		if (!line)
+		{
+			write(STDERR_FILENO, "exit\n", 5);
+			break;
+		}
 		// if (global_sig[2] == 1)
 		// {
 		// 	global_sig[2] = 0;

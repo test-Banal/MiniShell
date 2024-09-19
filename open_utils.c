@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   open_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 12:19:32 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/16 12:12:57 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 15:05:42 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"minishell.h"
+#include <sys/ioctl.h>
+#include <termios.h>
+
+volatile sig_atomic_t g_heredoc_interrupted = 0;
+#include <setjmp.h>
+
+jmp_buf jump_buffer; // Declare the 'jump_buffer' variable
 
 ///////TENTER UN AUTRE TRUC POUR LES REDIRECTIONS MAIS POUR L'INSTANT CE NE FONCTIONNE TOUJOURS PAS, sinon pb de here-doc regle mais tjrs pas redirection
 
@@ -197,35 +204,60 @@ void	ft_handle_heredoc_helper(t_redir *redir, int fd, char *line)
 		perror("open");
 		free_data(redir->data, EXIT_FAILURE);
 	}
-	while (1)
+	// signal(SIGINT, &heredoc_signal);
+	// signal(SIGQUIT, SIG_IGN);
+	if (setjmp(jump_buffer) == 0)
 	{
-		write(1, " > ", 3);
-		line = get_next_line(STDIN_FILENO);
-		if (!line)
+		while (1)
 		{
-			write(2, "\nbash: warning - file delimited by end-of-file ", 46);
-			write(2, redir->next->str, ft_strlen(redir->next->str));
-			write(2, "\n", 1);
-			break ;
+			signal(SIGINT, &heredoc_signal);
+			write(1, " > ", 3);
+
+			signal(SIGQUIT, SIG_IGN);
+			line = get_next_line(STDIN_FILENO);
+			if (!line)
+			{
+				write(2, "\nbash: warning - file delimited by end-of-file ", 46);
+				write(2, redir->next->str, ft_strlen(redir->next->str));
+				write(2, "\n", 1);
+				break ;
+			}
+			// if (g_heredoc_interrupted == 1)
+			// {
+			// 	free_data(redir->data, 0);
+			// 	break;
+			// }
+
+			if (line[ft_strlen(line) - 1] == '\n')
+				line[ft_strlen(line) - 1] = '\0';
+			if ((ft_strcmp(line, redir->next->str) == 0))
+				break;
+			write(fd, line, ft_strlen(line));
+			write(fd, "\n", 1);
+			free(line);
 		}
-		if (line[ft_strlen(line) - 1] == '\n')
-		 	line[ft_strlen(line) - 1] = '\0';
-		if  ((ft_strcmp(line, redir->next->str) == 0))
-			break;
-		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
 		free(line);
-	}
-	free(line);
-	close(fd);
-	fd = open(redir->next->str, O_RDONLY);
-	if (fd == -1)
-	{
-		unlink(redir->next->str);
-		perror("open");
-		free_data(redir->data, 0);
-	}
+		close(fd);
+		fd = open(redir->next->str, O_RDONLY);
+		if (fd == -1)
+		{
+			unlink(redir->next->str);
+			perror("open");
+			free_data(redir->data, 0);
+		}
 	//supprimer le fichier tmp .heredoc85
 	// redir->cmd->fd_heredoc = fd;
-	close(fd);
+		close(fd);
+	}
+}
+
+
+void	heredoc_signal(int status)
+{
+	if (status == SIGINT)
+		{
+			g_heredoc_interrupted = 1;
+			write(STDERR_FILENO, "\n", 1);
+			longjmp(jump_buffer, 1); 
+		}
 }

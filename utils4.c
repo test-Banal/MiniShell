@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 16:14:39 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/03 16:56:25 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 11:04:41 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,4 +116,16 @@ char	*ft_strcpy(char *dest, char *src)
 	}
 	dest[i] = '\0';
 	return (dest);
+}
+void	read_pipe_in(t_cmd *cmd)
+{
+	char	buffer[1024];
+	ssize_t	bytes_read;
+
+	bytes_read = 1;
+	if (cmd->prev != NULL)
+	{
+		while (bytes_read > 0)
+			bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
+	}
 }

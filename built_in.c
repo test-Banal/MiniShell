@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 15:24:40 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/18 21:41:59 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 11:06:22 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,17 +35,10 @@ void	env_function(t_data *data, t_cmd *cmd)
 void	pwd_function(t_data *data, t_cmd *cmd)
 {
 	char	*pwd;
-	char	buffer[1024];
-	ssize_t	bytes_read;
 	int		i;
 
 	(void)data;
-	bytes_read = 1;
-	if (cmd->prev != NULL)
-	{
-		while (bytes_read > 0)
-			bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
-	}
+	read_pipe_in(cmd);
 	pwd = getcwd(NULL, 0);
 	printf("%s\n", pwd);
 	free(pwd);
