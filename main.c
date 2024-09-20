@@ -6,7 +6,7 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 08:29:16 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/19 15:16:00 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:56:17 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,26 +17,12 @@
 //g_signals[1] = SIGINT ctrl+C
 //g_signals[2] = EOF ctrl+D
 //a rajouter des cas?
-int	global_sig[3];
+//int	g_sig[3];
+int 	g_sig;
 
-void	printtoken(t_data *data)
-{
-	t_token	*current;
-
-	current = data->token;
-	while (current != NULL)
-	{
-		printf("%d token. id = %d. str = %s\n", current->index, current->id, current->str);
-		current = current->next;
-	}
-}
 
 void	builtins_init(t_data *data)
 {
-	data->pipes = NULL;
-	data->child_pids = NULL;
-	data->pwd = NULL;
-	data->old_pwd = NULL;
 	data->exit_code = 0;
 	data->built_in[0] = "cd";
 	data->built_in[1] = "echo";
@@ -55,48 +41,10 @@ void	builtins_init(t_data *data)
 	data->built_in_functions[6] = &unset_function;
 	data->built_in_functions[7] = NULL;
 	data->cmd = NULL;
-	global_sig[0] = 0;
-	global_sig[1] = 0;
-	global_sig[2] = 0;
-}
-
-void	print_cmd_list(t_cmd *cmd_list)
-{
-	t_cmd	*current;
-	int		i;
-
-	current = cmd_list;
-	while (current != NULL)
-	{
-		printf("Command:\n");
-		if (current->args != NULL)
-		{
-			printf("  Arguments:\n");
-			for (i = 0; current->args[i] != NULL; i++)
-				printf("    %s\n", current->args[i]);
-		}
-		else
-			printf("  Arguments: None\n");
-		if (current->redirection != NULL)
-		{
-			printf("  Redirections:\n");
-			t_redir	*current_redir = current->redirection;
-			while (current_redir != NULL)
-			{
-				printf("    Redirection: %s\n", current_redir->str);
-				current_redir = current_redir->next;
-			}
-		}
-		else
-			printf("  Redirections: None\n");
-		printf("  pipe_in = %d\n  pipe_out = %d\n", current->pipe_in, current->pipe_out);
-		if (current->built_in != NULL)
-			printf("  Built-in function: %p\n", current->built_in);
-		else
-			printf("  Built-in function: None\n");
-		printf("  FD = %d\n", current->fd_heredoc);
-		current = current->next;
-	}
+	// g_sig[0] = 0;
+	// g_sig[1] = 0;
+	// g_sig[2] = 0;
+	data->option = EMPTY;
 }
 
 //marche pas encore :(
@@ -107,44 +55,30 @@ void	print_cmd_list(t_cmd *cmd_list)
 // 	global_sig[2] = 1;
 // }
 
-
-void	signal_handler(int signum)
+void	loop_routine(t_data *data, char *line)
 {
-	if (signum == SIGINT) //Ctrl-C
-		write(STDERR_FILENO, "\n", 1);
-	else if (signum == CHILD)
-	{
-		signal(SIGINT, &c_signal);
-		signal(SIGQUIT, SIG_DFL);
-	}
+	free(line);
+	parser(data);
+	expander(data);
+	executor(data);
+	free_pipex(data);
+	free_cmd_list(data);
 }
 
-
-//ajouter un fonction reset pour revenir proprement dans la miniloop sans leaks etc
-//par exemple en cas de ctrl+D
-//free_data le fait mais il faut voir des cas precis 
 void	miniloop(t_data *data)
 {
 	char	*line;
 
 	while (42)
 	{
-		signal(SIGINT, &signal_handler);
-		signal(SIGQUIT, SIG_IGN);
-
-		//line = readline("[Minishell]: ");
+		ft_signal(data, EMPTY);
 		line = readline(GREEN"[MINISHELL]: "RESET);
 		if (!line)
 		{
+			set_exit_code(data, 0);
 			write(STDERR_FILENO, "exit\n", 5);
-			break;
+			break ;
 		}
-		// if (global_sig[2] == 1)
-		// {
-		// 	global_sig[2] = 0;
-		// 	continue ;
-		// }
-		// signal(SIGINT, SIG_DFL);
 		if (line != NULL)
 		{
 			if (line[0] == '\0')
@@ -155,15 +89,9 @@ void	miniloop(t_data *data)
 				free(line);
 				continue ;
 			}
-			free(line);
-			// printtoken(data);
-			parser(data);
-			expander(data);
-			// print_cmd_list(data->cmd);
-			executor(data);
-			free_pipex(data);
-			free_cmd_list(data);
+			loop_routine(data, line);
 		}
+		ft_signal(data, WRITE);
 	}
 }
 
@@ -192,6 +120,7 @@ void	free_pipex(t_data *data)
 
 void	free_data(t_data *data, int exit_code)
 {
+	clean_token_list(data);
 	free_pipex(data);
 	free_cmd_list(data);
 	set_exit_code(data, exit_code);
@@ -208,24 +137,18 @@ int	main(int ac, char **av, char **env)
 	data.token = NULL;
 	data.cmd = NULL;
 	data.redir = NULL;
+	data.pipes = NULL;
+	data.child_pids = NULL;
+	data.pwd = NULL;
+	data.old_pwd = NULL;
 	printf("\n%s\n", WELCOME);
 	builtins_init(&data);
 	ft_env_to_lst(&data, env);
 	get_pwd(&data);
 	miniloop(&data);
 	rl_clear_history();
+	free_pipex(&data);
 	free_var_list(&data);
 	free_cmd_list(&data);
 	return (data.exit_code);
 }
-
-//to do list
-/* 
-	gestion d'exit_code pas top -> command not found ne change pas de valeur d'exit code dans le parent
-	checker les commandes vides!!!
-	refonte de la fonction handle_exitcode();
-	dans le parser checker id de la redirection par exemple < <,
-	accesoirement refaire le syntax check des redirections
-	affichage different entre export truc et export truc=   ?
-    signaux 
-*/

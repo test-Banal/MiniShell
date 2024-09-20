@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 15:24:40 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/19 11:06:22 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:35:42 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ void	env_function(t_data *data, t_cmd *cmd)
 {
 	t_var	*current;
 
+	read_pipe_in(cmd);
 	current = data->var;
-	(void)cmd;
 	while (current != NULL)
 	{
 		if (current->name != NULL && current->value != NULL \
@@ -27,11 +27,8 @@ void	env_function(t_data *data, t_cmd *cmd)
 		}
 		current = current->next;
 	}
-	if (cmd->pipe_in != STDIN_FILENO)
-		close(cmd->pipe_in);
 }
 
-//provisoire?
 void	pwd_function(t_data *data, t_cmd *cmd)
 {
 	char	*pwd;
@@ -47,31 +44,12 @@ void	pwd_function(t_data *data, t_cmd *cmd)
 	{
 		while (cmd->args[i])
 		{
-			printf(" %s ", cmd->args[i]);
+			if (cmd->args[i][0] == '-')
+				printf("%s ", cmd->args[i]);
 			i++;
 		}
-		printf(" invalid option(s)\n");
+		printf(" : invalid option(s)\n");
 	}
-}
-
-int	ft_strstr_1(char *str, char *to_find)
-{
-	int	i;
-	int	j;
-
-	if (!str)
-		return (0);
-	i = 1;
-	while (str[i] != '\0')
-	{
-		j = 0;
-		while (to_find[j] == str[i + j] && (i + j) && str[i + j])
-			j++;
-		if (to_find[j] == '\0')
-			return (1);
-		i++;
-	}
-	return (0);
 }
 
 void	append_value(t_data *data, char **args, int *i)
@@ -84,7 +62,7 @@ void	append_value(t_data *data, char **args, int *i)
 	new_value = NULL;
 	current = data->var;
 	name = get_name(args[*i]);
-	value = get_value_export(args[*i]);// a tester avec truc= et truc, l'affichage doit etre different
+	value = get_value_export(args[*i]);
 	while (current != NULL)
 	{
 		if (ft_strcmp(current->name, name) == 0)
@@ -103,12 +81,12 @@ void	append_value(t_data *data, char **args, int *i)
 	export_var_with_value(args, data, i);
 }
 
-//a tester encore un peu
 void	export_function(t_data *data, t_cmd *cmd)
 {
 	t_var	*current;
 	int		i;
 
+	read_pipe_in(cmd);
 	current = data->var;
 	i = 1;
 	if (tab_size(cmd->args) == 1)
@@ -120,13 +98,41 @@ void	export_function(t_data *data, t_cmd *cmd)
 	{
 		if (ft_strstr_1(cmd->args[i], "+="))
 			append_value(data, cmd->args, &i);
-		if (ft_strchr(cmd->args[i], '+') && !ft_strchr(cmd->args[i], '='))
+		else
+			i++;
+		if (cmd->args[i] && ft_strchr(cmd->args[i], '+')
+			&& !ft_strchr(cmd->args[i], '='))
 			export_error(data, cmd->args[i]);
-		if (cmd->args[i] && ft_strchr(cmd->args[i], '='))
+		if (cmd->args[i] && cmd->args[i] && ft_strchr(cmd->args[i], '='))
 			export_var_with_value(cmd->args, data, &i);
 		else if (cmd->args[i] && !ft_strchr(cmd->args[i], '='))
 			export_without_value(cmd->args, data, &i);
 	}
-	if (cmd->prev != NULL && cmd->prev->pipe_out != STDOUT_FILENO)
-		close(cmd->prev->pipe_out);
+}
+
+void	cd_function(t_data *data, t_cmd *cmd)
+{
+	char	*pwd;
+	char	*oldpwd;
+
+	read_pipe_in(cmd);
+	if (tab_size(cmd->args) > 2)
+	{
+		ft_putstr_fd("cd: too many arguments\n", 2);
+		set_exit_code(data, 1);
+		return ;
+	}
+	if (tab_size(cmd->args) == 1
+		|| (cmd->args[1] && ft_strcmp(cmd->args[1], "~") == 0))
+	{
+		cd_home(data, &pwd, &oldpwd);
+		return ;
+	}
+	else if (cmd->args[1] && ft_strcmp(cmd->args[1], "-") == 0)
+	{
+		cd_minus(data, &pwd, &oldpwd);
+		return ;
+	}
+	else
+		cd_helper(data, cmd);
 }

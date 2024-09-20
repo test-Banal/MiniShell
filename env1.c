@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/25 11:59:37 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/10 16:53:41 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:27:00 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,4 +117,3 @@ int	ft_env_to_lst(t_data *data, char **env)
 	var = init_env_var(name, value, i);
 	return (add_var_list(data, var), free(name), free(value), 1);
 }
-

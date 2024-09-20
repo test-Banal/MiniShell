@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:21:51 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/12 11:23:24 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:27:12 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	set_exit_code(t_data *data, int exit_code)
 void	get_pwd(t_data *data)
 {
 	t_var	*current;
-	
+
 	current = data->var;
 	while (current != NULL)
 	{

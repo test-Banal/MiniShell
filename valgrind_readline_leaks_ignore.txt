@@ -30,3 +30,16 @@
 	...
 	obj:*clear*
 }
+{
+	ignore_all_make_leaks
+	Memcheck:Leak
+	...
+	obj:*/usr/bin/make*
+}
+{
+   ignore_malloc_below_main
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:below_main
+}

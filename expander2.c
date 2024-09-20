@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:58:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/18 08:55:21 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:40:01 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,29 +29,34 @@ char	*change_var(t_data *data, char *var_name)
 	return (ft_strdup(""));
 }
 
+void	toggle_quotes(t_data *data, char c)
+{
+	if (c == '\'' && data->in_double == 0)
+		data->in_single = !data->in_single;
+	else if (c == '\"' && data->in_single == 0)
+		data->in_double = !data->in_double;
+}
+
 void	check_for_var2(t_data *data, char **dest, int *i, char *str)
 {
 	char	*var_value;
 	int		end;
 	char	*var_name;
 	char	*tmp;
-	int		in_single_quotes;
 
-	in_single_quotes = 0;
+	data->in_single = 0;
+	data->in_double = 0;
 	while (str[*i])
 	{
-		if (str[*i] == '\'')
-			in_single_quotes = 1;			
-		if (str[*i] == '$' && !in_single_quotes)
+		toggle_quotes(data, str[*i]);
+		if (str[*i] == '$' && data->in_single == 0)
 		{
 			tmp = ft_substr(str, data->start, *i - data->start);
-			*dest = ft_strjoin(*dest, tmp);
-			free(tmp);
+			*dest = ft_strjoin3(*dest, tmp);
 			end = find_end_var(str, *i);
 			var_name = ft_substr(str, *i + 1, end - *i - 1);
 			var_value = change_var(data, var_name);
-			*dest = ft_strjoin(*dest, var_value);
-			free(var_value);
+			*dest = ft_strjoin3(*dest, var_value);
 			*i = end;
 			data->start = *i;
 		}
@@ -77,8 +82,7 @@ void	check_for_var(t_data *data, char *str, t_cmd *current, int j)
 	if (data->start < i)
 	{
 		tmp = ft_substr(str, data->start, i - data->start);
-		dest = ft_strjoin(dest, tmp);
-		free(tmp);
+		dest = ft_strjoin3(dest, tmp);
 	}
 	free(current->args[j]);
 	if (sign != NULL)
@@ -104,7 +108,7 @@ void	expand_var_quotes(t_data *data)
 		i = 0;
 		while (current->args[i])
 		{
-			if (current->args[i][0] != '\'' && ft_strchr(current->args[i], '$'))
+			if (ft_strchr(current->args[i], '$'))
 			{
 				len = ft_strlen(current->args[i]);
 				tmp = ft_substr(current->args[i], 0, len);
@@ -116,42 +120,3 @@ void	expand_var_quotes(t_data *data)
 		current = current->next;
 	}
 }
-
-int	find_end_var_lexer(char *str, int i)
-{
-	i++;
-	while (str[i] && !is_separator(str[i]))
-		i++;
-	return (i);
-}
-
-
-// void	expand_var(t_data *data)
-// {
-// 	t_cmd	*current;
-// 	int		i;
-// 	char	*tmp;
-
-// 	current = data->cmd;
-// 	while (current != NULL)
-// 	{
-// 		i = 0;
-// 		while (current->args[i])
-// 		{
-// 			if (current->args[i][0] == '$')
-// 			{
-// 				tmp = change_var(data, current->args[i] + 1);
-// 				if (current->args[i][0] == '$' && ft_strlen(current->args[i]) == 1)
-// 				{
-// 					free(tmp);
-// 					tmp = ft_strdup("$");
-// 				}
-// 				free(current->args[i]);
-// 				current->args[i] = ft_strdup(tmp);
-// 				free(tmp);
-// 			}
-// 			i++;
-// 		}
-// 		current = current->next;
-// 	}
-// }

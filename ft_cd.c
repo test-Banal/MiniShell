@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:17:44 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/19 11:05:03 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:35:36 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*get_oldpwd(t_var *var)
 void	cd_minus(t_data *data, char **pwd, char **oldpwd)
 {
 	char	*tmp;
-	
+
 	*oldpwd = getcwd(NULL, 0);
 	tmp = get_oldpwd(data->var);
 	chdir(tmp);
@@ -66,39 +66,19 @@ void	cd_home(t_data *data, char **pwd, char **oldpwd)
 	free(*oldpwd);
 }
 
-void	cd_function(t_data *data, t_cmd *cmd)
+void	cd_helper(t_data *data, t_cmd *cmd)
 {
 	char	*pwd;
 	char	*oldpwd;
 
-	read_pipe_in(cmd);
-	if (tab_size(cmd->args) > 2)
+	oldpwd = getcwd(NULL, 0);
+	if (chdir(cmd->args[1]) == -1)
 	{
-		ft_putstr_fd("cd: too many arguments\n", 2);
-		return ;
+		perror("cd");
+		set_exit_code(data, 1);
 	}
-	if (tab_size(cmd->args) == 1 || (cmd->args[1] && ft_strcmp(cmd->args[1], "~") == 0))
-	{
-		cd_home(data, &pwd, &oldpwd);
-		return ;
-	}
-	else if (cmd->args[1] && ft_strcmp(cmd->args[1], "-") == 0)
-	{
-		cd_minus(data, &pwd, &oldpwd);
-		return ;
-	}
-	else
-	{
-		//faire une fonction a part
-		oldpwd = getcwd(NULL, 0);
-		if (chdir(cmd->args[1]) == -1)
-		{
-			perror("cd");
-			set_exit_code(data, 1);
-		}
-		pwd = getcwd(NULL, 0);
-		set_pwd(data, pwd, oldpwd);
-		free(pwd);
-		free(oldpwd);
-	}
+	pwd = getcwd(NULL, 0);
+	set_pwd(data, pwd, oldpwd);
+	free(pwd);
+	free(oldpwd);
 }

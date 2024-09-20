@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 12:13:31 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/19 11:06:39 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 10:03:27 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ void	echo_function(t_data *data, t_cmd *cmd)
 		i = 2;
 	while (cmd->args[i])
 	{
-		printf("%s ", cmd->args[i]);
+		if (cmd->args[i][0])
+			printf("%s ", cmd->args[i]);
 		i++;
 	}
 	if (option_flag == 0)

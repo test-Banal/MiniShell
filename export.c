@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
+/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 15:45:43 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/17 15:16:36 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:33:19 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,6 @@ void	update_var(t_var *var, char *new_value)
 	free(var->value);
 	var->value = ft_strdup(new_value);
 	free(new_value);
-}
-
-void	export_error(t_data *data, char *value)
-{
-	ft_putstr_fd("export : ", 2);
-	ft_putstr_fd(value, 2);
-	ft_putstr_fd(" : not a valid identifier\n", 2);
-	if (value)
-		free(value);
-	free_data(data, 1);
 }
 
 void	export_var_with_value(char **args, t_data *data, int *i)
@@ -89,6 +79,8 @@ void	export_without_value(char **args, t_data *data, int *i)
 
 	var = data->var;
 	name = get_name(args[*i]);
+	if (!name[0])
+		return ;
 	while (var != NULL)
 	{
 		if (ft_strcmp(var->name, name) == 0)
@@ -104,46 +96,6 @@ void	export_without_value(char **args, t_data *data, int *i)
 	free(name);
 	(*i)++;
 }
-
-// void	ft_print_export(t_data *data, t_cmd *cmd)
-// {
-// 	t_var	*current;
-
-// 	current = data->var;
-// 	while (current != NULL)
-// 	{
-// 		// printf("PIPE OUT = %d\n", cmd->pipe_out);
-// 		ft_putstr_fd(current->name, cmd->pipe_out);
-// 		if (ft_strcmp(current->value, "") == 0)
-// 			ft_putstr_fd("=\"\"", cmd->pipe_out);
-// 		else
-// 		{
-// 			ft_putstr_fd("=\"", cmd->pipe_out);
-// 			ft_putstr_fd(current->value, cmd->pipe_out);
-// 			ft_putstr_fd("\"", cmd->pipe_out);
-// 		}
-// 		ft_putstr_fd("\n", cmd->pipe_out);
-// 		current = current->next;
-// 	}
-// }
-
-// void	ft_print_export(t_data *data, t_cmd *cmd)
-// {
-// 	t_var	*current;
-
-// 	current = data->var;
-// 	(void)cmd;
-// 	while (current != NULL)
-// 	{
-// 		printf("%s", current->name);
-// 		if (ft_strcmp(current->value, "") == 0)
-// 			printf("=\"\"");
-// 		else
-// 			printf("=\"%s\"", current->value);
-// 		printf("\n");
-// 		current = current->next;
-// 	}
-// }
 
 void	ft_print_export(t_data *data, t_cmd *cmd)
 {

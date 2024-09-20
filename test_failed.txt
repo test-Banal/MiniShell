@@ -1,7 +1,6 @@
-tests :
+tests :i
 
 ### des fd pas fermes surtout apres les redirections
-
 
 listes test posent probleme :
 - cat << EOF                 ### reparé
@@ -14,9 +13,6 @@ listes test posent probleme :
 	cat greeting.txtcat Makefile | echo 123 | << eof 
 
 ### j'ai change le fonctionnement du heredoc, ces commandes doivent marcher mtn
-### par contre pour declarer une variable la commande c'est:
-### export var=Hello
-### pour enlever une variable c'est unset var
 
 
 ### faura checker si sans environnement "env -i ./minishell"
@@ -24,7 +20,8 @@ listes test posent probleme :
 
 ### toujours des fd pas fermes, surtout avec des redirections
 
-### se renseigner sur les signaux parce que pour l'instant ca ne marche po
+### signaux : ATTENTION CA BUG APRES HEREDOC
+-       ctrl-C apres here_Doc = FAIL (ok pour ctrl-\  et ctrl-D)
 
 
 
@@ -60,21 +57,22 @@ listes test posent probleme :
 
 /////new jeudi 19/09
 
--       echo '$HO''ME'          #bash : $HOME , Maxishell : $HO''ME  
--	echo "$HO"ME		#pas la meme sortie
--	echo "$HO""ME"		# idem
--	echo "'$HO''ME'"	# idem
--	echo ""$HOME		# idem
--OK	echo "" $HOME 		# okkk
--OK	echo '' $HOME 		# okkk
--	echo $"HO""ME"		# idem
--	echo $'HO''ME'		# idem
--OK	echo $'HOME' 		# okk
--	echo $=HOME		# idem
--	echo $CHIPPS hola	# juste un espace en trop
--	echo ''h'o'la''		# idem
--OK	echo "''h'ol'la''"	# okk
--	echo "'"h'o'la"'"	# idem
+-OK	echo '$HO''ME'
+-OK	echo "$HO"ME
+-OK	echo "$HO""ME"
+-OK	echo "'$HO''ME'"
+-OK	echo ''""$PWD
+-OK	echo ""$HOME
+-OK?	echo "" $HOME 		# espace en moins
+-OK?	echo '' $HOME 		# espace en moins
+-OK	echo $"HO""ME"		
+-OK	echo $'HO''ME'		
+-OK	echo $'HOME' 	
+-?	echo $=HOME				#  expansion de la "variable" $=
+-OK	echo $CHIPPS hola
+-OK	echo ''h'o'la''		
+-OK	echo "''h'ol'la''"
+-OK	echo "'"h'o'la"'"
 
 (jarrete les tests echo a ligne [130, [153, 181] 224] <=> test effectue jusqua ligne 130, puis reprise a 153 jusqua environ 181, puis reprise 224)
 
@@ -94,23 +92,12 @@ a priori unset c'est good (reprise ligne 381)
 -	pwd ls			# bash : pwd classique, Maxishell :pwd classique + msg error ls
 
 
--	(ATTENTION cd ///////)  # OK, tjrs ok qd resultat exepcted : pwd =  /
--	cd /minishell		# cd dossier inexistant : Bash : msg d'erreur, Maxishell : (rien)
 - 	cd -			# bash : equivalent a cd .. : bash affiche chemin dossier precedent, Maxishell : (rien) 
--	cd $HOME $HOME		# bash : msg d'error , Maxishell : (rien)
--	cd "$PWD/srcs"		# bash : msg d'err0r, Maxishell : (rien)	
--	cd _			#OKKKKKKKKK
-
-
+### cd - revient dans oldpwd, pas vraiment dans cd .. mais le dossier precedent, ca fonctionne bien
+cd a l'air good en sachant que il doit pas marcher en multicommande (avec des pipes)
 
 
 
 =====>> tests failed fiche evaluation :
 
--	revoir 'test only tabs" mais normalement c'est good tab fait appel au "T9' des fichiers
--	try expr $? + $?  //marche tres bien, essaye echo 123 | exit  125 ; expr $? + $? VALIDE
--	pas le meme exit code pour ce test : /bin/grep pattern fichier.txt
--	pb exit code qd cmd incorrect : /bin/ls -z 
-
--QUESTION : normal que clear ne fonction hors du projet ? ex pwd : /home/aneumann =>  FATAL: can't open suppressions file "valgrind_readline_leaks_ignore.txt"
 

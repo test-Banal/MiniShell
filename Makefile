@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+         #
+#    By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/28 11:54:39 by roarslan          #+#    #+#              #
-#    Updated: 2024/09/10 17:22:19 by roarslan         ###   ########.fr        #
+#    Updated: 2024/09/20 16:27:22 by aneumann         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ SRC = main.c \
 	utils2.c \
 	utils3.c \
 	utils4.c \
+	utils5.c \
 	parsing0.c \
 	parsing1.c \
 	parsing2.c \
@@ -38,14 +39,19 @@ SRC = main.c \
 	lexer.c \
 	parser1.c \
 	parser2.c \
-	parser3.c \
 	expander1.c \
 	expander2.c \
+	expander3.c \
 	pipex.c \
+	piping.c \
 	pipex_utils.c \
 	open_utils.c \
 	get_next_line.c \
-	get_next_line_utils.c
+	get_next_line_utils.c \
+	signal.c \
+	syntax_check.c \
+	heredoc.c \
+	ft_error.c
 
 HEADER = minishell.h
 

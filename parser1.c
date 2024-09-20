@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:52:34 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/17 17:13:34 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:33:25 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,54 +30,32 @@ void	parser(t_data *data)
 		cmd->built_in = assign_builtin_pointer(data, cmd->args[0]);
 	append_cmd(&data->cmd, cmd);
 	clean_token_list(data);
-	check_redir_syntax2(data, data->cmd);
 	if (data->token != NULL)
 		parser(data);
 }
 
-void	check_redir_syntax2(t_data *data, t_cmd *cmd)
-{
-	t_cmd	*current_cmd;
-	t_redir	*current_redir;
-	int		count;
-
-	current_cmd = cmd;
-	while (current_cmd != NULL)
-	{
-		current_redir = cmd->redirection;
-		count = 0;
-		while (current_redir != NULL)
-		{
-			count++;
-			current_redir = current_redir->next;
-		}
-		if (count % 2 != 0)
-		{
-			ft_putstr_fd("syntax error\n", 2);
-			set_exit_code(data, 2);
-			free_cmd_list(data);
-			miniloop(data);
-			return ;
-		}
-		current_cmd = current_cmd->next;
-	}
-}
-
 void	parser_helper(t_token **current, t_cmd **cmd, int *index)
 {
-	while ((*current) != NULL && (*current)->id != PIPE)
+	while (*current != NULL && (*current)->id != PIPE)
 	{
-		if ((*current)->id != PIPE && (*current)->id != WORD)
+		if ((*current)->id != WORD)
 		{
 			add_redirection(*cmd, *current);
 			*current = (*current)->next;
-			if (*current != NULL && (*current)->id != PIPE && (*current)->id == WORD)
+			if (*current != NULL && (*current)->id == WORD)
 			{
 				add_redirection(*cmd, *current);
 				*current = (*current)->next;
 			}
+			else if (*current != NULL && (*current)->id != PIPE)
+			{
+				ft_putstr_fd("syntax error\n", 2);
+				append_cmd(&(*cmd)->data_p->cmd, *cmd);
+				free_data((*cmd)->data_p, EXIT_FAILURE);
+				return ;
+			}
 		}
-		else if (*current != NULL && (*current)->id == WORD)
+		else
 		{
 			add_argument((*cmd)->args, (*current)->str, index);
 			*current = (*current)->next;
@@ -97,7 +75,7 @@ void	add_redirection(t_cmd *cmd, t_token *token)
 	new->index = token->index;
 	new->id = token->id;
 	new->str = ft_strdup(token->str);
-	new->path = getcwd(NULL, 0); ///////////////// a tester, peut etre chercher $PWD a la place
+	new->path = getcwd(NULL, 0);
 	new->data = cmd->data_p;
 	new->cmd = cmd;
 	new->next = NULL;

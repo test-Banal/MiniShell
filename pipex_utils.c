@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:34:13 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/19 11:19:34 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:16:34 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ bool	ft_close_all_fds(t_data *data)
 	current = data->cmd;
 	while (current != NULL)
 	{
-		if (!isatty(current->pipe_in))
+		if (current->pipe_in != -1 && !isatty(current->pipe_in))
 			close(current->pipe_in);
-		if (!isatty(current->pipe_out))
+		if (current->pipe_out != -1 && !isatty(current->pipe_out))
 			close(current->pipe_out);
 		current = current->next;
 	}

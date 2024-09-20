@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
+/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 12:19:44 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/03 12:19:44 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:37:03 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ char	*get_next_line(int fd)
 	free(buf);
 	if (ft_strlen(line) > 0)
 		return (line);
-	free (line);  
+	free (line);
 	return (NULL);
 }
 /*

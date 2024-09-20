@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/19 17:35:58 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/03 14:30:19 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 09:59:59 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ char	*ft_strjoin(char *s1, char const *s2)
 	return (dest);
 }
 
-char	*ft_strjoin2(char *s1, char const *s2)
+char	*ft_strjoin2(char const *s1, char const *s2)
 {
 	int		i;
 	int		j;

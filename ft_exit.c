@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 10:12:56 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/17 17:16:45 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:20:41 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 //dans exit double free ????
 void	ft_free_and_exit(t_data *data, int exit_code)
 {
-	rl_clear_history();//??parfois pas visible dans readline_history
+	if (ft_cmd_lstsize(data->cmd) == 1)
+		rl_clear_history();
 	set_exit_code(data, exit_code);
 	free_var_list(data);
 	free_pipex(data);
@@ -31,6 +32,7 @@ void	exit_function(t_data *data, t_cmd *cmd)
 
 	i = 1;
 	nb = 0;
+	read_pipe_in(cmd);
 	while (cmd->args[i] != NULL)
 	{
 		if (cmd->args[1])

@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 18:40:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/02 18:40:34 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/20 12:22:08 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	unset_function(t_data *data, t_cmd *cmd)
 	int		i;
 
 	i = 1;
+	read_pipe_in(cmd);
 	while (cmd->args[i] != NULL)
 	{
 		unset_var(data, cmd->args[i]);
