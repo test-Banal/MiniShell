@@ -6,7 +6,7 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:43:33 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 15:55:46 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/21 16:18:07 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@
 # define CHILD 3 
 
 extern int				g_sig;
+extern int				g_here_sig;
 typedef struct s_data	t_data;
 typedef struct s_cmd	t_cmd;
 typedef void			(*t_b_in)(t_data *data, t_cmd *cmd);
@@ -310,6 +311,7 @@ void			handle_exitcode(t_data *data, int status);
 void			ft_redirect(t_cmd *cmd, int input, int output);
 bool			ft_waitpid(t_data *data);
 bool			ft_close_all_fds(t_data *data);
+void			ft_unlink_heredocs(t_data *data);
 
 //pipex
 int				is_simple_command(t_cmd *cmd);
@@ -319,12 +321,13 @@ void			child(t_cmd *cmd, t_data *data);
 bool			ft_execute_pipeline(t_data *data);
 void			copy_pipes(t_data *shell);
 void			ft_close_fds_child(t_data *data);
+void			execute_builtin(t_data *data, t_cmd *cmd);
+void			ft_execve_error(char *str, char **tab, t_data *data);
 
 //piping
 bool			ft_create_pipes(t_data *data);
 void			assign_pipes(t_cmd *cmd, int **pipes, int cmd_index, int total_cmds);
 void			ft_assign_pipes(t_data *data);
-
 
 //open_utils
 bool			ft_open_redir(t_data *data);
@@ -350,7 +353,7 @@ void			check_pipes_syntax(t_data *data, t_token *token);
 void			check_redir_syntax(t_data *data, t_token *token);
 
 //signals
-void			heredoc_signal(int status); //dans le fichier open-utils.c
+void			heredoc_signal(int status);
 void			c_signal(int status);
 void			signal_handler(int signum);
 void			ft_signal(t_data *data, int option);

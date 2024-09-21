@@ -6,7 +6,7 @@
 #    By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/28 11:54:39 by roarslan          #+#    #+#              #
-#    Updated: 2024/09/20 16:27:22 by aneumann         ###   ########.fr        #
+#    Updated: 2024/09/21 16:08:57 by aneumann         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,6 +43,8 @@ SRC = main.c \
 	expander2.c \
 	expander3.c \
 	pipex.c \
+	pipex2.c \
+	signal2.c \
 	piping.c \
 	pipex_utils.c \
 	open_utils.c \

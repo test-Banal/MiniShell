@@ -6,7 +6,7 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 12:19:32 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/20 16:26:46 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/21 15:06:48 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,3 @@ bool	ft_open_redir_input(t_redir *redir)
 	}
 	return (true);
 }
-
-

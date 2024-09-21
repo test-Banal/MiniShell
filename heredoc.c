@@ -6,11 +6,11 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 16:27:46 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/20 17:57:11 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:55:16 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 void	ft_open_redir_heredoc(t_redir *redir)
 {
@@ -59,13 +59,12 @@ int	ft_handle_heredoc_helper(t_redir *redir, int fd, char *line)
 	fd = open(redir->next->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 		return (perror("open"), free_data(redir->data, EXIT_FAILURE), 0);
-	// ft_signal(redir->data, HEREDOC);
 	while (1)
 	{
+		ft_signal(redir->data, HEREDOC);
 		write(1, " > ", 3);
 		line = get_next_line(STDIN_FILENO);
-        ft_signal(redir->data, HEREDOC);
-        if (!line)
+		if (!line)
 		{
 			write(2, "\nbash: warning - file delimited by end-of-file ", 46);
 			write(2, redir->next->str, ft_strlen(redir->next->str));
@@ -79,12 +78,14 @@ int	ft_handle_heredoc_helper(t_redir *redir, int fd, char *line)
 		write(fd, line, ft_strlen(line));
 		write(fd, "\n", 1);
 		free(line);
+		if (g_sig == 130)
+		{
+			close(fd);
+			g_sig = 0;
+			g_here_sig = 1;
+			return (130);
+		}
+		ft_signal(redir->data, EMPTY);
 	}
-    if (g_sig == 130)
-    {
-        close(fd);
-        return g_sig;
-    }
-    ft_signal(redir->data, EMPTY);
-    return ( free(line), close(fd), 0);
+	return (free(line), close(fd), 0);
 }

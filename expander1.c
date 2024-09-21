@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 15:10:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 15:34:32 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:41:23 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,19 +45,18 @@ char	*remove_outer_quotes(char *tmp)
 	{
 		if ((tmp[k] == '\'' || tmp[k] == '\"')
 			&& (in_quotes == 0 || tmp[k] == quote_char))
+		{
+			if (in_quotes == 0)
 			{
-				if (in_quotes == 0)
-				{
-					in_quotes = 1;
-					quote_char = tmp[k];
-				}
-				else if (tmp[k] == quote_char)
-				{
-					in_quotes = 0;
-					quote_char = '\0';
-				}
-			// toggle_quote_status(&in_quotes, &quote_char, tmp[k]);
+				in_quotes = 1;
+				quote_char = tmp[k];
 			}
+			else if (tmp[k] == quote_char)
+			{
+				in_quotes = 0;
+				quote_char = '\0';
+			}
+		}
 		else
 			new_str[j++] = tmp[k];
 		k++;

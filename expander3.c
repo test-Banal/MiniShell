@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 12:28:59 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 15:19:26 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:48:17 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ int	find_end_var(char *str, int i)
 	if (!is_alpha(str[i]))
 		return (i + 1);
 	while (str[i] && ((str[i] >= 'A' && str[i] <= 'Z')
-		|| (str[i] >= 'a' && str[i] <= 'z')
-		|| (str[i] >= '0' && str[i] <= '9')
-		|| str[i] == '_' || str[i] == '?'))
+			|| (str[i] >= 'a' && str[i] <= 'z')
+			|| (str[i] >= '0' && str[i] <= '9')
+			|| str[i] == '_' || str[i] == '?'))
 		i++;
 	return (i);
 }
@@ -53,7 +53,7 @@ char	*expand_cmd(char *str, t_data *data)
 
 	bins = NULL;
 	if (!str[0])
-		return (NULL);		
+		return (NULL);
 	bins = get_binarys(data);
 	if (!bins)
 		return (NULL);

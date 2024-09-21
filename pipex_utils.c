@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:34:13 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/19 16:16:34 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/21 16:16:26 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ int	is_simple_command(t_cmd *cmd)
 	if (cmd->data_p->size != 1)
 		return (0);
 	if (cmd->args[0] && (ft_strcmp(cmd->args[0], "export") == 0
-		|| ft_strcmp(cmd->args[0], "unset") == 0
-		|| ft_strcmp(cmd->args[0], "exit") == 0
-		|| ft_strcmp(cmd->args[0], "cd") == 0))
+			|| ft_strcmp(cmd->args[0], "unset") == 0
+			|| ft_strcmp(cmd->args[0], "exit") == 0
+			|| ft_strcmp(cmd->args[0], "cd") == 0))
 		return (1);
 	return (0);
 }
@@ -29,7 +29,6 @@ int	is_simple_command(t_cmd *cmd)
 // {
 // 	char	*str;
 // 	char	**tab;
-	
 // 	str = ft_strdup(cmd->args[0]);
 // 	tab = var_list_to_tab(cmd->data_p->var);
 // 	// if (cmd->redirection)
@@ -43,7 +42,6 @@ int	is_simple_command(t_cmd *cmd)
 // 		exit(EXIT_FAILURE);
 // 	}
 // }
-
 
 //alocate pid : creer un tableau de pid_t de la taille du nombre de commandes
 // et initialise chaque case a -1, pourque le processus parent verifier 
@@ -104,3 +102,21 @@ void	handle_exitcode(t_data *data, int status)
 		set_exit_code(data, 1);
 }
 
+void	ft_unlink_heredocs(t_data *data)
+{
+	t_cmd	*current_cmd;
+	t_redir	*current_redir;
+
+	current_cmd = data->cmd;
+	while (current_cmd != NULL)
+	{
+		current_redir = current_cmd->redirection;
+		while (current_redir != NULL)
+		{
+			if (current_redir->id == LESS_LESS)
+				unlink(current_redir->next->str);
+			current_redir = current_redir->next;
+		}
+		current_cmd = current_cmd->next;
+	}
+}

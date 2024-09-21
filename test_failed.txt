@@ -1,32 +1,31 @@
 tests :i
 
-### des fd pas fermes surtout apres les redirections
+1) ### des fd pas fermes surtout apres les redirections
 
-listes test posent probleme :
-- cat << EOF                 ### reparé
-- << eof cat | echo 6767 >> outfile    =>>> tourne dans le vide apres avoir fait le here_doc
-### ne tourne plus dans le vide mais fd ouvert dans parent et l'enfant 
-- cat Makefile | echo 123 | << eof >> outfile
-### SIGPIPE + leaks + fd ouverts dans enfants
-- 	var="Hello"
-	echo "$var World" > greeting.txt
-	cat greeting.txtcat Makefile | echo 123 | << eof 
+2) listes test posent probleme :
+	- cat << EOF                 ### reparé
+	- << eof cat | echo 6767 >> outfile    =>>> tourne dans le vide apres avoir fait le here_doc
+	### ne tourne plus dans le vide mais fd ouvert dans parent et l'enfant 
+	- cat Makefile | echo 123 | << eof >> outfile
+	### SIGPIPE + leaks + fd ouverts dans enfants
+	- 	var="Hello"
+		echo "$var World" > greeting.txt
+		cat greeting.txtcat Makefile | echo 123 | << eof 
 
-### j'ai change le fonctionnement du heredoc, ces commandes doivent marcher mtn
+3) ### j'ai change le fonctionnement du heredoc, ces commandes doivent marcher mtn
 
 
-### faura checker si sans environnement "env -i ./minishell"
-### on doit quand meme pouvoir executer des commandes sans absolute path
+4) ### faura checker si sans environnement "env -i ./minishell"
+	on doit quand meme pouvoir executer des commandes sans absolute path
 
-### toujours des fd pas fermes, surtout avec des redirections
+5) ### toujours des fd pas fermes, surtout avec des redirections
 
-### signaux : ATTENTION CA BUG APRES HEREDOC
+6) ### signaux : ATTENTION CA BUG APRES HEREDOC
 -       ctrl-C apres here_Doc = FAIL (ok pour ctrl-\  et ctrl-D)
+====> normalement ctrl-C here_doc regler mais 
+il execute les commandes suivantes : ex :  << eof cat | echo 123  MAIS PB EXIT_CODE !!
 
-
-
-
-
+7) ### ATTENTION leak : $ << (juste << sans eof) , surement parsing
 
 
 ====>> tests failed (via Minishell Map) : 

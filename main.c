@@ -6,20 +6,14 @@
 /*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 08:29:16 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 15:56:17 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:56:10 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//variable globale
-//g_signals[0] = SIGQUIT ctrl+\
-//g_signals[1] = SIGINT ctrl+C
-//g_signals[2] = EOF ctrl+D
-//a rajouter des cas?
-//int	g_sig[3];
-int 	g_sig;
-
+int		g_sig;
+int		g_here_sig;
 
 void	builtins_init(t_data *data)
 {
@@ -41,19 +35,8 @@ void	builtins_init(t_data *data)
 	data->built_in_functions[6] = &unset_function;
 	data->built_in_functions[7] = NULL;
 	data->cmd = NULL;
-	// g_sig[0] = 0;
-	// g_sig[1] = 0;
-	// g_sig[2] = 0;
 	data->option = EMPTY;
 }
-
-//marche pas encore :(
-// void	sigint_handler(int signum)
-// {
-// 	(void)signum;
-// 	write(1, "^C", 2);
-// 	global_sig[2] = 1;
-// }
 
 void	loop_routine(t_data *data, char *line)
 {

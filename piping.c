@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 12:47:43 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 12:48:24 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:33:06 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ bool	ft_create_pipes(t_data *data)
 	int	i;
 
 	i = 0;
-    data->size = ft_cmd_lstsize(data->cmd);
+	data->size = ft_cmd_lstsize(data->cmd);
 	data->pipes = ft_calloc(data->size, sizeof(int *));
 	if (!data->pipes)
 		return (false);
