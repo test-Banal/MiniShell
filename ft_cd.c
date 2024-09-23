@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:17:44 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 12:35:36 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:33:27 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ char	*get_home(t_var *var)
 	while (current != NULL)
 	{
 		if (ft_strcmp("HOME", current->name) == 0)
-			return (current->value);
+			return (ft_strdup(current->value));
 		current = current->next;
 	}
-	return (NULL);
+	return (ft_strdup(""));
 }
 
 char	*get_oldpwd(t_var *var)
@@ -33,52 +33,72 @@ char	*get_oldpwd(t_var *var)
 	current = var;
 	while (current != NULL)
 	{
-		if (ft_strcmp("OLDPWD", current->name) == 0)
-			return (current->value);
+		if (ft_strcmp("PWD", current->name) == 0)
+			return (ft_strdup(current->value));
 		current = current->next;
 	}
-	return (NULL);
+	return (ft_strdup(""));
 }
 
-void	cd_minus(t_data *data, char **pwd, char **oldpwd)
+int	cd_minus(t_data *data)
+{
+	char	*tmp;
+	char	*current_pwd;
+
+	tmp = ft_strdup(data->old_pwd);
+	if (chdir(tmp) != 0)
+	{
+		perror("cd");
+		free(tmp);
+		return (set_exit_code(data, 2), 1);
+	}
+	current_pwd = ft_strdup(data->pwd);
+	free(data->pwd);
+	data->pwd = ft_strdup(tmp);
+	free(tmp);
+	free(data->old_pwd);
+	data->old_pwd = ft_strdup(current_pwd);
+	set_pwd(data, data->pwd, data->old_pwd);
+	free(current_pwd);
+	return (0);
+}
+
+int	cd_home(t_data *data)
+{
+	char	*home;
+	char	*current_pwd;
+
+	home = get_home(data->var);
+	if (chdir(home) != 0)
+	{
+		perror("cd");
+		return (set_exit_code(data, 1), 1);
+	}
+	current_pwd = ft_strdup(home);
+	free(data->old_pwd);
+	data->old_pwd = ft_strdup(data->pwd);
+	data->pwd = ft_strdup(current_pwd);
+	set_pwd(data, data->pwd, data->old_pwd);
+	free(current_pwd);
+	free(home);
+	return (0);
+}
+
+int	cd_helper(t_data *data, t_cmd *cmd)
 {
 	char	*tmp;
 
-	*oldpwd = getcwd(NULL, 0);
 	tmp = get_oldpwd(data->var);
-	chdir(tmp);
-	*pwd = getcwd(NULL, 0);
-	set_pwd(data, *pwd, *oldpwd);
-	free(*pwd);
-	free(*oldpwd);
-}
-
-void	cd_home(t_data *data, char **pwd, char **oldpwd)
-{
-	char	*home;
-
-	*oldpwd = getcwd(NULL, 0);
-	home = get_home(data->var);
-	chdir(home);
-	*pwd = getcwd(NULL, 0);
-	set_pwd(data, *pwd, *oldpwd);
-	free(*pwd);
-	free(*oldpwd);
-}
-
-void	cd_helper(t_data *data, t_cmd *cmd)
-{
-	char	*pwd;
-	char	*oldpwd;
-
-	oldpwd = getcwd(NULL, 0);
 	if (chdir(cmd->args[1]) == -1)
 	{
 		perror("cd");
 		set_exit_code(data, 1);
 	}
-	pwd = getcwd(NULL, 0);
-	set_pwd(data, pwd, oldpwd);
-	free(pwd);
-	free(oldpwd);
+	free(data->old_pwd);
+	data->old_pwd = ft_strdup(tmp);
+	free(data->pwd);
+	data->pwd = getcwd(NULL, 0);
+	set_pwd(data, data->pwd, data->old_pwd);
+	free(tmp);
+	return (0);
 }

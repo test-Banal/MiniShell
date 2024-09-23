@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
+/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 15:34:24 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/21 15:36:43 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:41:33 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,16 @@ void	ft_signal_option(t_data *data)
 		signal(SIGINT, &c_signal);
 		signal(SIGQUIT, sigquit_handler);
 	}
+}
+
+void	globals_init(void)
+{
+	g_sig[0] = 0;
+	g_sig[1] = 0;
+}
+
+void	global_c(t_data *data)
+{
+	g_sig[0] = 0;
+	set_exit_code(data, 130);
 }

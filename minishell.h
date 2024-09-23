@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
+/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:43:33 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/21 16:18:07 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/23 16:11:02 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 ██║ ╚═╝ ██║██║██║ ╚████║██║███████║██║  ██║███████╗███████╗███████╗\n\
 ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝\033[0m\n\n"
 
+//lexer
 # define PIPE 1
 # define LESS 2
 # define MORE 3
@@ -62,8 +63,7 @@
 # define HEREDOC 2
 # define CHILD 3 
 
-extern int				g_sig;
-extern int				g_here_sig;
+extern int				g_sig[2];
 typedef struct s_data	t_data;
 typedef struct s_cmd	t_cmd;
 typedef void			(*t_b_in)(t_data *data, t_cmd *cmd);
@@ -136,11 +136,9 @@ typedef struct s_data
 //main
 int				find_end_word(char *str, int i);
 void			builtins_init(t_data *data);
-void			print_cmd_list(t_cmd *cmd_list); ////////test
-void			printtoken(t_data *data); // test
-void			miniloop(t_data *data);
+int				miniloop(t_data *data);
 void			free_data(t_data *data, int exit_code);
-void			free_pipex(t_data *data);
+void			loop_routine(t_data *data, char *line);
 
 //utils1
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
@@ -237,9 +235,9 @@ void			export_function(t_data *data, t_cmd *cmd);
 void			cd_function(t_data *data, t_cmd *cmd);
 
 // ft_cd
-void			cd_helper(t_data *data, t_cmd *cmd);
-void			cd_home(t_data *data, char **pwd, char **oldpwd);
-void			cd_minus(t_data *data, char **pwd, char **oldpwd);
+int				cd_helper(t_data *data, t_cmd *cmd);
+int				cd_home(t_data *data);
+int				cd_minus(t_data *data);
 char			*get_oldpwd(t_var *var);
 char			*get_home(t_var *var);
 
@@ -304,6 +302,7 @@ void			toggle_quotes(t_data *data, char c);
 int				find_end_var(char *str, int i);
 char			*find_command_path(char *str, char **bins);
 char			*expand_cmd(char *str, t_data *data);
+int				is_only_dollars(char *str);
 
 //pipex_utils
 bool			allocate_pids(t_data *data);
@@ -326,8 +325,9 @@ void			ft_execve_error(char *str, char **tab, t_data *data);
 
 //piping
 bool			ft_create_pipes(t_data *data);
-void			assign_pipes(t_cmd *cmd, int **pipes, int cmd_index, int total_cmds);
+void			assign_pipes(t_cmd *cmd, int **pipes, int index, int total);
 void			ft_assign_pipes(t_data *data);
+void			free_pipex(t_data *data);
 
 //open_utils
 bool			ft_open_redir(t_data *data);
@@ -348,7 +348,7 @@ char			*ft_strchr_gnl(char const *s, int c);
 
 //syntax_check
 int				syntax_check(t_data *data);
-int				check_redir_syntax2(t_cmd *cmd);
+int				check_redir_syntax2(t_data *data);
 void			check_pipes_syntax(t_data *data, t_token *token);
 void			check_redir_syntax(t_data *data, t_token *token);
 
@@ -359,8 +359,13 @@ void			signal_handler(int signum);
 void			ft_signal(t_data *data, int option);
 void			ft_signal_option(t_data *data);
 void			sigquit_handler(int signum);
+void			globals_init(void);
+void			global_c(t_data *data);
 
 //ft_error
 void			export_error(t_data *data, char *value);
+void			ft_dup2_error(t_data *data);
+void			ft_error_heredoc(char *line, int fd, char *str);
+void			ft_execve_dir_error(char *str, t_data *data);
 
 #endif

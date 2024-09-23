@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 12:28:59 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/21 14:48:17 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:54:20 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	find_end_var(char *str, int i)
 {
 	i++;
-	if (!is_alpha(str[i]))
+	if (str[i] && !is_alpha(str[i]))
 		return (i + 1);
 	while (str[i] && ((str[i] >= 'A' && str[i] <= 'Z')
 			|| (str[i] >= 'a' && str[i] <= 'z')
@@ -62,4 +62,18 @@ char	*expand_cmd(char *str, t_data *data)
 	if (!cmd_path)
 		return (ft_strdup(str));
 	return (cmd_path);
+}
+
+int	is_only_dollars(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != '$' && !is_quote(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }

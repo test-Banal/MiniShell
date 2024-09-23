@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 12:13:31 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 10:03:27 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:58:54 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	echo_function(t_data *data, t_cmd *cmd)
 		option_flag = is_n_option(cmd->args[1]);
 	if (option_flag == 1)
 		i = 2;
+	while (cmd->args[i] && is_n_option(cmd->args[i]) == 1)
+		i++;
 	while (cmd->args[i])
 	{
 		if (cmd->args[i][0])

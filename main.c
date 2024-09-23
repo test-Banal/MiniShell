@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
+/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 08:29:16 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/21 14:56:10 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:43:31 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		g_sig;
-int		g_here_sig;
+int		g_sig[2];
 
 void	builtins_init(t_data *data)
 {
@@ -48,24 +47,22 @@ void	loop_routine(t_data *data, char *line)
 	free_cmd_list(data);
 }
 
-void	miniloop(t_data *data)
+int	miniloop(t_data *data)
 {
 	char	*line;
 
 	while (42)
 	{
+		globals_init();
 		ft_signal(data, EMPTY);
 		line = readline(GREEN"[MINISHELL]: "RESET);
+		if (g_sig[0] == 1)
+			global_c(data);
 		if (!line)
+			return (set_exit_code(data, 0), \
+			write(STDERR_FILENO, "exit\n", 5), 1);
+		if (line != NULL || line[0] == '\0')
 		{
-			set_exit_code(data, 0);
-			write(STDERR_FILENO, "exit\n", 5);
-			break ;
-		}
-		if (line != NULL)
-		{
-			if (line[0] == '\0')
-				continue ;
 			add_history(line);
 			if (!lexer(line, data))
 			{
@@ -76,29 +73,7 @@ void	miniloop(t_data *data)
 		}
 		ft_signal(data, WRITE);
 	}
-}
-
-void	free_pipex(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	if (data->pipes)
-	{
-		while (i < ft_cmd_lstsize(data->cmd))
-		{
-			if (data->pipes[i])
-				free(data->pipes[i]);
-			i++;
-		}
-		free(data->pipes);
-		data->pipes = NULL;
-	}
-	if (data->child_pids)
-	{
-		free(data->child_pids);
-		data->child_pids = NULL;
-	}
+	return (0);
 }
 
 void	free_data(t_data *data, int exit_code)

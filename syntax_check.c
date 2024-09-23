@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:21:26 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/19 16:14:58 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 11:45:20 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,21 @@ int	syntax_check(t_data *data)
 			return (0);
 		current = current->next;
 	}
-	if (!check_redir_syntax2(data->cmd))
+	if (!check_redir_syntax2(data))
 		return (0);
 	return (1);
 }
 
-int	check_redir_syntax2(t_cmd *cmd)
+int	check_redir_syntax2(t_data *data)
 {
 	t_cmd	*current_cmd;
 	t_redir	*current_redir;
 	int		count;
 
-	current_cmd = cmd;
+	current_cmd = data->cmd;
 	while (current_cmd != NULL)
 	{
-		current_redir = cmd->redirection;
+		current_redir = current_cmd->redirection;
 		count = 0;
 		while (current_redir != NULL)
 		{
@@ -45,7 +45,7 @@ int	check_redir_syntax2(t_cmd *cmd)
 			current_redir = current_redir->next;
 		}
 		if (count % 2 != 0)
-			return (0);
+			return (set_exit_code(data, 2), 0);
 		current_cmd = current_cmd->next;
 	}
 	return (1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
+/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 15:55:01 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/21 16:16:37 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/21 21:59:14 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,31 +17,15 @@ void	ft_redirect(t_cmd *cmd, int input, int output)
 	if (input != STDIN_FILENO)
 	{
 		if (dup2(input, STDIN_FILENO) == -1)
-		{
-			// perror("dup2 input");
-			ft_close_fds_child(cmd->data_p);
-			free_pipex(cmd->data_p);
-			// set_exit_code(cmd->data_p, EXIT_FAILURE);
-			free_var_list(cmd->data_p);
-			free_cmd_list(cmd->data_p);
-			exit(EXIT_FAILURE);
-		}
+			ft_dup2_error(cmd->data_p);
 		if (input != -1)
 			close(input);
 	}
 	if (output != STDOUT_FILENO)
 	{
 		if (dup2(output, STDOUT_FILENO) == -1)
-		{
-			// perror("dup2 output");
-			ft_close_fds_child(cmd->data_p);
-			free_pipex(cmd->data_p);
-			// set_exit_code(cmd->data_p, EXIT_FAILURE);
-			free_var_list(cmd->data_p);
-			free_cmd_list(cmd->data_p);
-			exit(EXIT_FAILURE);
-		}
-		if (output != -1) //test
+			ft_dup2_error(cmd->data_p);
+		if (output != -1)
 			close(output);
 	}
 }

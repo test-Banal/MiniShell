@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 13:21:51 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 12:27:12 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:24:55 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ char	**var_list_to_tab(t_var *var)
 	return (dest);
 }
 
-//set_exit_code(cmd->data_p, exit_code);
 void	set_exit_code(t_data *data, int exit_code)
 {
 	t_var	*current;
@@ -75,16 +74,6 @@ void	get_pwd(t_data *data)
 	}
 }
 
-void	set_pwd2(t_data *data, char *pwd, char *oldpwd)
-{
-	if (data->pwd)
-		free(data->pwd);
-	data->pwd = ft_strdup(pwd);
-	if (data->old_pwd)
-		free(data->old_pwd);
-	data->old_pwd = ft_strdup(oldpwd);
-}
-
 void	set_pwd(t_data *data, char *pwd, char *oldpwd)
 {
 	t_var	*current;
@@ -111,5 +100,4 @@ void	set_pwd(t_data *data, char *pwd, char *oldpwd)
 		}
 		current = current->next;
 	}
-	set_pwd2(data, pwd, oldpwd);
 }

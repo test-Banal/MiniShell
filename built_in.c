@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 15:24:40 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 12:35:42 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 16:03:06 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,11 @@ void	pwd_function(t_data *data, t_cmd *cmd)
 	(void)data;
 	read_pipe_in(cmd);
 	pwd = getcwd(NULL, 0);
+	if (!pwd)
+	{
+		ft_putstr_fd("error retrieving current directory\n", 2);
+		return ;
+	}
 	printf("%s\n", pwd);
 	free(pwd);
 	i = 1;
@@ -98,8 +103,6 @@ void	export_function(t_data *data, t_cmd *cmd)
 	{
 		if (ft_strstr_1(cmd->args[i], "+="))
 			append_value(data, cmd->args, &i);
-		else
-			i++;
 		if (cmd->args[i] && ft_strchr(cmd->args[i], '+')
 			&& !ft_strchr(cmd->args[i], '='))
 			export_error(data, cmd->args[i]);
@@ -112,9 +115,6 @@ void	export_function(t_data *data, t_cmd *cmd)
 
 void	cd_function(t_data *data, t_cmd *cmd)
 {
-	char	*pwd;
-	char	*oldpwd;
-
 	read_pipe_in(cmd);
 	if (tab_size(cmd->args) > 2)
 	{
@@ -125,12 +125,12 @@ void	cd_function(t_data *data, t_cmd *cmd)
 	if (tab_size(cmd->args) == 1
 		|| (cmd->args[1] && ft_strcmp(cmd->args[1], "~") == 0))
 	{
-		cd_home(data, &pwd, &oldpwd);
+		cd_home(data);
 		return ;
 	}
 	else if (cmd->args[1] && ft_strcmp(cmd->args[1], "-") == 0)
 	{
-		cd_minus(data, &pwd, &oldpwd);
+		cd_minus(data);
 		return ;
 	}
 	else

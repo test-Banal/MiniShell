@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   open_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
+/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 12:19:32 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/21 15:06:48 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/21 21:53:51 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,9 @@ void	ft_open_redir_output(t_redir *redir)
 		O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (redir->cmd->pipe_out == -1)
 	{
-		ft_putstr_fd(redir->next->str, 2);
-		ft_putstr_fd("Error\n", 2);
+		if (redir->next->str)
+			ft_putstr_fd(redir->next->str, 2);
+		ft_putstr_fd(" : Error\n", 2);
 	}
 }
 
@@ -55,8 +56,9 @@ void	ft_open_redir_append(t_redir *redir)
 		O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (redir->cmd->pipe_out < 0)
 	{
-		ft_putstr_fd(redir->next->str, 2);
-		ft_putstr_fd("Error\n", 2);
+		if (redir->next->str)
+			ft_putstr_fd(redir->next->str, 2);
+		ft_putstr_fd(" : Error\n", 2);
 	}
 }
 
@@ -69,7 +71,8 @@ bool	ft_open_redir_input(t_redir *redir)
 		redir->cmd->pipe_in = open(redir->next->str, O_RDONLY);
 	if (redir->cmd->pipe_in == -1)
 	{
-		ft_putstr_fd(redir->next->str, 2);
+		if (redir->next->str)
+			ft_putstr_fd(redir->next->str, 2);
 		ft_putstr_fd(" : No such file or directory\n", 2);
 	}
 	return (true);

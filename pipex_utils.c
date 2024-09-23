@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
+/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:34:13 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/21 16:16:26 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/21 22:05:11 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,6 @@ int	is_simple_command(t_cmd *cmd)
 	return (0);
 }
 
-//void	simple_child(t_cmd *cmd)
-// {
-// 	char	*str;
-// 	char	**tab;
-// 	str = ft_strdup(cmd->args[0]);
-// 	tab = var_list_to_tab(cmd->data_p->var);
-// 	// if (cmd->redirection)
-// 	// 	ft_redirect(cmd, cmd->pipe_in, cmd->pipe_out);
-// 	if (cmd->pipe_in != 0)
-// 		dup2(cmd->pipe_in, 0);
-// 	if (cmd->pipe_out != 1)
-// 		dup2(cmd->pipe_out, 1);
-// 	if(execve(str, cmd->args, tab) == -1);
-// 	{	perror("execve");
-// 		exit(EXIT_FAILURE);
-// 	}
-// }
-
-//alocate pid : creer un tableau de pid_t de la taille du nombre de commandes
-// et initialise chaque case a -1, pourque le processus parent verifier 
-//que le processus enfant a bien ete execute. 
 bool	allocate_pids(t_data *data)
 {
 	int	i;

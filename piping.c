@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 12:47:43 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/21 14:33:06 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:04:24 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,22 +35,22 @@ bool	ft_create_pipes(t_data *data)
 	return (true);
 }
 
-void	assign_pipes(t_cmd *cmd, int **pipes, int cmd_index, int total_cmds)
+void	assign_pipes(t_cmd *cmd, int **pipes, int index, int total)
 {
-	if (cmd_index == 0)
+	if (index == 0)
 	{
 		cmd->pipe_in = STDIN_FILENO;
-		cmd->pipe_out = pipes[cmd_index][1];
+		cmd->pipe_out = pipes[index][1];
 	}
-	else if (cmd_index == total_cmds - 1)
+	else if (index == total - 1)
 	{
-		cmd->pipe_in = pipes[cmd_index - 1][0];
+		cmd->pipe_in = pipes[index - 1][0];
 		cmd->pipe_out = STDOUT_FILENO;
 	}
 	else
 	{
-		cmd->pipe_in = pipes[cmd_index - 1][0];
-		cmd->pipe_out = pipes[cmd_index][1];
+		cmd->pipe_in = pipes[index - 1][0];
+		cmd->pipe_out = pipes[index][1];
 	}
 }
 
@@ -66,5 +66,28 @@ void	ft_assign_pipes(t_data *data)
 		assign_pipes(current, data->pipes, i, data->size);
 		i++;
 		current = current->next;
+	}
+}
+
+void	free_pipex(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	if (data->pipes)
+	{
+		while (i < ft_cmd_lstsize(data->cmd))
+		{
+			if (data->pipes[i])
+				free(data->pipes[i]);
+			i++;
+		}
+		free(data->pipes);
+		data->pipes = NULL;
+	}
+	if (data->child_pids)
+	{
+		free(data->child_pids);
+		data->child_pids = NULL;
 	}
 }

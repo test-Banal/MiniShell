@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+         #
+#    By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/28 11:54:39 by roarslan          #+#    #+#              #
-#    Updated: 2024/09/21 16:08:57 by aneumann         ###   ########.fr        #
+#    Updated: 2024/09/21 21:51:35 by roarslan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,6 @@ SRC = main.c \
 	env1.c \
 	env2.c \
 	is_cmd.c \
-	quotes_double.c \
 	built_in.c \
 	unset.c \
 	export.c \

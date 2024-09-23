@@ -6,25 +6,25 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 15:10:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/21 14:41:23 by aneumann         ###   ########.fr       */
+/*   Updated: 2024/09/23 13:30:21 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// void	toggle_quote_status(int *in_quotes, char *quote_char, char c)
-// {
-// 	if (*in_quotes == 0)
-// 	{
-// 		*in_quotes = 1;
-// 		*quote_char = c;
-// 	}
-// 	else if (c == *quote_char)
-// 	{
-// 		*in_quotes = 0;
-// 		*quote_char = '\0';
-// 	}
-// }
+void	toggle_delete_quote(int *in_quotes, char c, char *quote_char)
+{
+	if (*in_quotes == 0)
+	{
+		*in_quotes = 1;
+		*quote_char = c;
+	}
+	else if (c == *quote_char)
+	{
+		*in_quotes = 0;
+		*quote_char = '\0';
+	}
+}
 
 char	*remove_outer_quotes(char *tmp)
 {
@@ -45,18 +45,7 @@ char	*remove_outer_quotes(char *tmp)
 	{
 		if ((tmp[k] == '\'' || tmp[k] == '\"')
 			&& (in_quotes == 0 || tmp[k] == quote_char))
-		{
-			if (in_quotes == 0)
-			{
-				in_quotes = 1;
-				quote_char = tmp[k];
-			}
-			else if (tmp[k] == quote_char)
-			{
-				in_quotes = 0;
-				quote_char = '\0';
-			}
-		}
+			toggle_delete_quote(&in_quotes, tmp[k], &quote_char);
 		else
 			new_str[j++] = tmp[k];
 		k++;

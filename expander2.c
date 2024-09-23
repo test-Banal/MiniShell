@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:58:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 15:40:01 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 15:52:19 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	check_for_var2(t_data *data, char **dest, int *i, char *str)
 	while (str[*i])
 	{
 		toggle_quotes(data, str[*i]);
-		if (str[*i] == '$' && data->in_single == 0)
+		if (str[*i] && str[*i] == '$' && data->in_single == 0)
 		{
 			tmp = ft_substr(str, data->start, *i - data->start);
 			*dest = ft_strjoin3(*dest, tmp);
@@ -70,13 +70,10 @@ void	check_for_var(t_data *data, char *str, t_cmd *current, int j)
 	int		i;
 	char	*tmp;
 	char	*dest;
-	char	*sign;
 
 	i = 0;
-	sign = NULL;
-	if (str[i] == '$' && ft_strlen(str) == 1)
-		sign = ft_strdup("$");
-	data->start = 0;
+	if (is_only_dollars(str))
+		return ;
 	dest = ft_strdup("");
 	check_for_var2(data, &dest, &i, str);
 	if (data->start < i)
@@ -85,13 +82,7 @@ void	check_for_var(t_data *data, char *str, t_cmd *current, int j)
 		dest = ft_strjoin3(dest, tmp);
 	}
 	free(current->args[j]);
-	if (sign != NULL)
-	{
-		current->args[j] = ft_strdup(sign);
-		free(sign);
-	}
-	else
-		current->args[j] = ft_strdup(dest);
+	current->args[j] = ft_strdup(dest);
 	free(dest);
 }
 
@@ -100,7 +91,6 @@ void	expand_var_quotes(t_data *data)
 	t_cmd	*current;
 	char	*tmp;
 	int		i;
-	int		len;
 
 	current = data->cmd;
 	while (current != NULL)
@@ -110,8 +100,8 @@ void	expand_var_quotes(t_data *data)
 		{
 			if (ft_strchr(current->args[i], '$'))
 			{
-				len = ft_strlen(current->args[i]);
-				tmp = ft_substr(current->args[i], 0, len);
+				data->start = 0;
+				tmp = ft_strdup(current->args[i]);
 				check_for_var(data, tmp, current, i);
 				free(tmp);
 			}
