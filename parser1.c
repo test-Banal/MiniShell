@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/22 14:52:34 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 14:33:25 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/24 07:29:07 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	parser(t_data *data)
 	int		index;
 
 	current = data->token;
+	check_empty_commands(data);
 	check_pipes_syntax(data, current);
 	check_redir_syntax(data, current);
 	init_cmd(&cmd, current, data);

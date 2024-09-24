@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 16:33:18 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 12:42:20 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/24 07:38:31 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	is_alpha(char c)
 	return (0);
 }
 
-int	ft_strstr_1(char *str, char *to_find)
+int	ft_strstr(char *str, char *to_find)
 {
 	int	i;
 	int	j;

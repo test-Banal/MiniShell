@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_check.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aneumann <aneumann@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 13:21:26 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/23 11:45:20 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/24 08:14:56 by aneumann         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ int	syntax_check(t_data *data)
 	current = data->cmd;
 	while (current != NULL)
 	{
-		if (current->args[0] == NULL && current->redirection == NULL)
-			return (0);
+		if (current->args == NULL && current->redirection == NULL)
+			return (set_exit_code(data, 2), 0);
 		current = current->next;
 	}
 	if (!check_redir_syntax2(data))
@@ -54,16 +54,18 @@ int	check_redir_syntax2(t_data *data)
 void	check_pipes_syntax(t_data *data, t_token *token)
 {
 	t_token	*current;
+	t_token	*head;
 
 	current = token;
+	head = data->token;
 	while (current != NULL)
 	{
 		if (current->id == PIPE && ft_strlen(current->str) > 1)
 		{
-			clean_token_list(data);
-			set_exit_code(data, 2);
-			ft_putstr_fd("syntax error\n", STDERR_FILENO);
-			miniloop(data);
+			ft_putstr_fd("syntax error\n", 2);
+			free_token_list(head);
+			data->token = NULL;
+			free_data(data, 2);
 			return ;
 		}
 		current = current->next;
@@ -73,16 +75,45 @@ void	check_pipes_syntax(t_data *data, t_token *token)
 void	check_redir_syntax(t_data *data, t_token *token)
 {
 	t_token	*current;
+	t_token	*head;
 
 	current = token;
+	head = data->token;
 	while (current != NULL)
 	{
 		if ((current->id == LESS || current->id == LESS_LESS
 				|| current->id == MORE || current->id == MORE_MORE)
 			&& ft_strlen(current->str) > 2)
 		{
-			clean_token_list(data);
-			set_exit_code(data, 2);
+			ft_putstr_fd("syntax error\n", 2);
+			free_token_list(head);
+			data->token = NULL;
+			free_data(data, 2);
+			return ;
+		}
+		current = current->next;
+	}
+}
+
+void	check_empty_commands(t_data *data)
+{
+	t_token	*current;
+	t_token	*head;
+
+	current = data->token;
+	head = data->token;
+	while (current != NULL)
+	{
+		if ((current->id == PIPE
+				&& (current->next == NULL || current->prev == NULL))
+			|| (current->id == PIPE
+				&& ((current->next && current->next->id == PIPE)
+					|| (current->prev && current->prev->id == PIPE))))
+		{
+			ft_putstr_fd("syntax error\n", 2);
+			free_token_list(head);
+			data->token = NULL;
+			free_data(data, 2);
 			return ;
 		}
 		current = current->next;

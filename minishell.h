@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 11:43:33 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/23 16:11:02 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/24 07:38:48 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ char			*ft_strcpy(char *dest, char *src);
 void			read_pipe_in(t_cmd *cmd);
 char			*ft_strjoin3(char *s1, char *s2);
 int				is_alpha(char c);
-int				ft_strstr_1(char *str, char *to_find);
+int				ft_strstr(char *str, char *to_find);
 
 //parsing0
 int				is_pipe(char c);
@@ -336,9 +336,10 @@ void			ft_open_redir_output(t_redir *redir);
 void			ft_open_redir_append(t_redir *redir);
 bool			ft_open_redir_input(t_redir *redir);
 void			ft_open_redir_heredoc(t_redir *redir);
-void			ft_heredoc_handler(t_data *data);
-void			ft_heredoc_search(t_cmd *cmd);
+int				ft_heredoc_handler(t_data *data);
+int				ft_heredoc_search(t_cmd *cmd);
 int				ft_handle_heredoc_helper(t_redir *redir, int fd, char *line);
+int				ft_try_open_input(t_redir *redir);
 
 //get_next_line
 char			*get_next_line(int fd);
@@ -351,6 +352,7 @@ int				syntax_check(t_data *data);
 int				check_redir_syntax2(t_data *data);
 void			check_pipes_syntax(t_data *data, t_token *token);
 void			check_redir_syntax(t_data *data, t_token *token);
+void			check_empty_commands(t_data *data);
 
 //signals
 void			heredoc_signal(int status);
@@ -367,5 +369,6 @@ void			export_error(t_data *data, char *value);
 void			ft_dup2_error(t_data *data);
 void			ft_error_heredoc(char *line, int fd, char *str);
 void			ft_execve_dir_error(char *str, t_data *data);
+void			free_token_list(t_token *token);
 
 #endif

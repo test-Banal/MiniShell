@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 12:34:26 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/23 16:24:54 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 17:30:03 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ bool	ft_execute_pipeline(t_data *data)
 	i = 0;
 	if (!allocate_pids(data))
 		return (false);
-	ft_heredoc_handler(data);
+	if (!ft_heredoc_handler(data))
+		return (ft_unlink_heredocs(data), false);
 	if (g_sig[1] == 1)
 	{
 		ft_unlink_heredocs(data);
-		ft_close_all_fds(data);
 		g_sig[1] = 0;
-		return (set_exit_code(data, 130), true);
+		return (ft_close_all_fds(data), set_exit_code(data, 130), true);
 	}
 	while (current != NULL)
 	{

@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 18:40:13 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 12:22:08 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 18:01:52 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ void	unset_function(t_data *data, t_cmd *cmd)
 	read_pipe_in(cmd);
 	while (cmd->args[i] != NULL)
 	{
-		unset_var(data, cmd->args[i]);
+		if (ft_strcmp(cmd->args[i], "?") != 0)
+			unset_var(data, cmd->args[i]);
 		i++;
 	}
 }

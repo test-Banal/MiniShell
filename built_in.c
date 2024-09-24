@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/02 15:24:40 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/23 16:03:06 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/24 07:40:12 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	env_function(t_data *data, t_cmd *cmd)
 	while (current != NULL)
 	{
 		if (current->name != NULL && current->value != NULL \
-				&& current->value[0] != '\0')
+				&& current->value[0] != '\0' \
+				&& ft_strcmp(current->name, "?") != 0)
 		{
 			printf("%s=%s\n", current->name, current->value);
 		}
@@ -32,28 +33,29 @@ void	env_function(t_data *data, t_cmd *cmd)
 void	pwd_function(t_data *data, t_cmd *cmd)
 {
 	char	*pwd;
-	int		i;
 
-	(void)data;
 	read_pipe_in(cmd);
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
 	{
 		ft_putstr_fd("error retrieving current directory\n", 2);
-		return ;
+		set_exit_code(data, 1);
+		free_pipex(data);
+		free_var_list(data);
+		free_cmd_list(data);
+		exit (1);
 	}
-	printf("%s\n", pwd);
+	if (tab_size(cmd->args) == 1)
+		printf("%s\n", pwd);
 	free(pwd);
-	i = 1;
 	if (tab_size(cmd->args) > 1)
 	{
-		while (cmd->args[i])
-		{
-			if (cmd->args[i][0] == '-')
-				printf("%s ", cmd->args[i]);
-			i++;
-		}
-		printf(" : invalid option(s)\n");
+		free_pipex(data);
+		set_exit_code(data, 1);
+		free_var_list(data);
+		free_cmd_list(data);
+		printf("invalid option(s)\n");
+		exit (1);
 	}
 }
 
@@ -68,7 +70,7 @@ void	append_value(t_data *data, char **args, int *i)
 	current = data->var;
 	name = get_name(args[*i]);
 	value = get_value_export(args[*i]);
-	while (current != NULL)
+	while (current != NULL && ft_strcmp(name, "?") != 0)
 	{
 		if (ft_strcmp(current->name, name) == 0)
 		{
@@ -101,12 +103,13 @@ void	export_function(t_data *data, t_cmd *cmd)
 	}
 	while (cmd->args[i] != NULL)
 	{
-		if (ft_strstr_1(cmd->args[i], "+="))
+		if (ft_strstr(cmd->args[i], "+="))
 			append_value(data, cmd->args, &i);
 		if (cmd->args[i] && ft_strchr(cmd->args[i], '+')
 			&& !ft_strchr(cmd->args[i], '='))
 			export_error(data, cmd->args[i]);
-		if (cmd->args[i] && cmd->args[i] && ft_strchr(cmd->args[i], '='))
+		if (cmd->args[i] && cmd->args[i] && ft_strchr(cmd->args[i], '=')
+			&& ft_strcmp(cmd->args[i], "?") != 0)
 			export_var_with_value(cmd->args, data, &i);
 		else if (cmd->args[i] && !ft_strchr(cmd->args[i], '='))
 			export_without_value(cmd->args, data, &i);

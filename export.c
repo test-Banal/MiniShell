@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 15:45:43 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/20 12:33:19 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/24 07:41:36 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	export_var_with_value(char **args, t_data *data, int *i)
 	name = get_name(args[*i]);
 	value = get_value(args[*i]);
 	var = data->var;
-	while (var != NULL)
+	while (var != NULL && ft_strcmp(name, "?") != 0)
 	{
 		if (name[0] == '\0')
 			export_error(data, value);
@@ -105,14 +105,17 @@ void	ft_print_export(t_data *data, t_cmd *cmd)
 	(void)cmd;
 	while (current != NULL)
 	{
-		printf("%s", current->name);
-		if (ft_strcmp(current->value, "") == 0)
-			printf("=\"\"");
-		else
+		if (ft_strcmp(current->name, "?") == 0)
+			current = current->next;
+		else if (current)
 		{
-			printf("=\"%s\"", current->value);
+			printf("%s", current->name);
+			if (ft_strcmp(current->value, "") == 0)
+				printf("=\"\"");
+			else
+				printf("=\"%s\"", current->value);
+			printf("\n");
+			current = current->next;
 		}
-		printf("\n");
-		current = current->next;
 	}
 }

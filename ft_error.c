@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 12:33:06 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/23 16:19:05 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/24 07:29:40 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,19 @@ void	ft_execve_dir_error(char *str, t_data *data)
 	free_var_list(data);
 	free_cmd_list(data);
 	exit(126);
+}
+
+void	free_token_list(t_token *token)
+{
+	t_token	*tmp;
+
+	while (token != NULL)
+	{
+		tmp = token;
+		token = token->next;
+		if (tmp->str)
+			free(tmp->str);
+		free(tmp);
+		tmp = NULL;
+	}
 }

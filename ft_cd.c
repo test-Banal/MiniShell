@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 13:17:44 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/23 15:33:27 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 17:59:23 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,13 @@ int	cd_home(t_data *data)
 		return (set_exit_code(data, 1), 1);
 	}
 	current_pwd = ft_strdup(home);
+	free(home);
 	free(data->old_pwd);
 	data->old_pwd = ft_strdup(data->pwd);
+	free(data->pwd);
 	data->pwd = ft_strdup(current_pwd);
-	set_pwd(data, data->pwd, data->old_pwd);
 	free(current_pwd);
-	free(home);
+	set_pwd(data, data->pwd, data->old_pwd);
 	return (0);
 }
 
@@ -98,6 +99,11 @@ int	cd_helper(t_data *data, t_cmd *cmd)
 	data->old_pwd = ft_strdup(tmp);
 	free(data->pwd);
 	data->pwd = getcwd(NULL, 0);
+	if (!data->pwd)
+	{
+		set_exit_code(data, 1);
+		return (free(tmp), 1);
+	}
 	set_pwd(data, data->pwd, data->old_pwd);
 	free(tmp);
 	return (0);

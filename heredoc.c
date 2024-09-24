@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 16:27:46 by aneumann          #+#    #+#             */
-/*   Updated: 2024/09/23 13:37:09 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/23 17:30:51 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,23 @@ void	ft_open_redir_heredoc(t_redir *redir)
 	}
 }
 
-void	ft_heredoc_search(t_cmd *cmd)
+int	ft_try_open_input(t_redir *redir)
+{
+	int	fd;
+
+	fd = open(redir->next->str, O_RDONLY);
+	if (fd < 0)
+	{
+		ft_putstr_fd(redir->next->str, 2);
+		ft_putstr_fd(" : No such file or directory\n", 2);
+		set_exit_code(redir->data, 1);
+		return (0);
+	}
+	close(fd);
+	return (1);
+}
+
+int	ft_heredoc_search(t_cmd *cmd)
 {
 	t_redir	*current;
 	int		fd;
@@ -38,11 +54,17 @@ void	ft_heredoc_search(t_cmd *cmd)
 	{
 		if (current->id == LESS_LESS)
 			ft_handle_heredoc_helper(current, fd, line);
+		else if (current->id == LESS)
+		{
+			if (!ft_try_open_input(current))
+				return (0);
+		}
 		current = current->next;
 	}
+	return (1);
 }
 
-void	ft_heredoc_handler(t_data *data)
+int	ft_heredoc_handler(t_data *data)
 {
 	t_cmd	*current;
 
@@ -50,9 +72,13 @@ void	ft_heredoc_handler(t_data *data)
 	while (current != NULL)
 	{
 		if (current->redirection != NULL)
-			ft_heredoc_search(current);
+		{
+			if (!ft_heredoc_search(current))
+				return (0);
+		}
 		current = current->next;
 	}
+	return (1);
 }
 
 int	ft_handle_heredoc_helper(t_redir *redir, int fd, char *line)
@@ -63,7 +89,7 @@ int	ft_handle_heredoc_helper(t_redir *redir, int fd, char *line)
 	while (1)
 	{
 		ft_signal(redir->data, HEREDOC);
-		line = readline(" > ");
+		line = readline("heredoc> ");
 		if (g_sig[1] == 130)
 		{
 			g_sig[0] = 0;

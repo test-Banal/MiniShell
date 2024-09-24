@@ -6,7 +6,7 @@
 /*   By: roarslan <roarslan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 08:29:16 by roarslan          #+#    #+#             */
-/*   Updated: 2024/09/23 15:43:31 by roarslan         ###   ########.fr       */
+/*   Updated: 2024/09/24 08:36:53 by roarslan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	miniloop(t_data *data)
 		if (!line)
 			return (set_exit_code(data, 0), \
 			write(STDERR_FILENO, "exit\n", 5), 1);
-		if (line != NULL || line[0] == '\0')
+		if (line != NULL || line[0] != '\0')
 		{
 			add_history(line);
 			if (!lexer(line, data))
@@ -78,7 +78,6 @@ int	miniloop(t_data *data)
 
 void	free_data(t_data *data, int exit_code)
 {
-	clean_token_list(data);
 	free_pipex(data);
 	free_cmd_list(data);
 	set_exit_code(data, exit_code);
